@@ -1,0 +1,57 @@
+{
+  "name": "@huangancheng/core",
+  "version": "0.0.0",
+  "author": "huangancheng",
+  "description": "No description.",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "unpkg": "./lib/umd/index.js",
+  "esnext": "./lib/types/index.js",
+  "typings": "./lib/types/index.d.ts",
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "build": "run-p \"build:*\"",
+    "build:types": "tsc",
+    "build:cjs": "node ../../scripts/build cjs",
+    "build:esm": "node ../../scripts/build esm",
+    "build:umd": "cross-env BABEL_ENV=rollup rollup -c ../../rollup.config.js",
+    "dev": "run-p \"build:types -- --watch\""
+  },
+  "dependencies": {
+    "react-is": "^16.8.0 || ^17.0.0"
+  },
+  "peerDependencies": {
+    "@types/react": "^16.8.6 || ^17.0.0",
+    "@types/react-dom": "^16.8.6 || ^17.0.0",
+    "@types/styled-components": "^5.1.3",
+    "react": "^16.8.0 || ^17.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0",
+    "styled-components": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    },
+    "@types/styled-components": {
+      "optional": true
+    }
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "typescript"
+  ],
+  "homepage": "https://github.com/ansenhuang/monorepo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansenhuang/monorepo.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/ansenhuang/monorepo/issues"
+  }
+}
