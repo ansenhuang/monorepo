@@ -2,28 +2,29 @@
   "name": "monorepo",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "examples",
-    "website"
+    "packages/*"
   ],
   "scripts": {
-    "start:npm": "npx verdaccio",
-    "start:dev": "lerna run dev --parallel",
+    "start-npm": "npx verdaccio",
+    "start-dev": "lerna run dev --parallel",
     "build": "lerna run build --parallel",
     "pub": "lerna publish",
-    "pub:local": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
+    "pub-local": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "lint": "eslint \"./**/*.{ts,tsx}\" --cache --cache-location .cache/.eslintcache --report-unused-disable-directives --ext .ts,.tsx",
     "stylelint": "stylelint \"./**/*.{ts,tsx}\" --cache --cache-location .cache/.stylelintcache",
     "prettier": "prettier --write \"./**/*.{ts,tsx}\"",
-    "prettier:check": "prettier --check \"./**/*.{ts,tsx}\"",
+    "prettier-check": "prettier --check \"./**/*.{ts,tsx}\"",
     "release": "yarn prettier && yarn lint && yarn stylelint && yarn build && yarn pub",
-    "release:local": "yarn prettier && yarn lint && yarn stylelint && yarn build && yarn pub:local"
+    "release-local": "yarn prettier && yarn lint && yarn stylelint && yarn build && yarn pub:local"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/plugin-proposal-decorators": "^7.10.1",
+    "@babel/plugin-proposal-export-default-from": "^7.10.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.10.1",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-react-constant-elements": "^7.10.1",
     "@babel/plugin-transform-runtime": "^7.10.1",
     "@babel/preset-env": "^7.10.2",

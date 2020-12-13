@@ -9,4 +9,6 @@ node_modules/
 package-lock.json
 
 # packages
-/packages/**/lib/
+lib/
+build/
+storybook-static/

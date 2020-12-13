@@ -19,6 +19,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "strictNullChecks": true,
     "pretty": true,
     "removeComments": true,
     "rootDir": "./",
