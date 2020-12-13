@@ -28,9 +28,8 @@ async function run(argv) {
   };
   const babelConfigPath = path.resolve(__dirname, '../babel.config.js');
   const srcDir = path.resolve('./src');
-  const extensions = ['.js', '.ts', '.tsx'];
+  const extensions = ['.ts', '.tsx'];
   const ignore = [
-    '**/*.test.js',
     '**/*.test.ts',
     '**/*.test.tsx',
     '**/*.spec.ts',

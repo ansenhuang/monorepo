@@ -8,12 +8,23 @@ module.exports = {
     browser: true,
     node: true,
   },
-  extends: ['plugin:import/recommended', 'plugin:import/typescript'],
+  extends: [
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from @typescript-eslint/eslint-plugin
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 7,
+    ecmaFeatures: {
+      jsx: true // Allows for the parsing of JSX
+    },
   },
-  plugins: ['eslint-plugin-react', 'eslint-plugin-react-hooks', '@typescript-eslint/eslint-plugin'],
+  plugins: [
+    'eslint-plugin-react',
+    'eslint-plugin-react-hooks',
+    '@typescript-eslint/eslint-plugin',
+  ],
   settings: {
     react: {
       version: 'detect',
