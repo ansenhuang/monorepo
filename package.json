@@ -2,16 +2,17 @@
   "name": "monorepo",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "scripts": {
     "start-npm": "npx verdaccio",
-    "start-dev": "lerna run dev --parallel",
-    "build": "lerna run build --parallel",
+    "start-dev": "lerna run dev --parallel --scope \"@huangancheng/*\"",
+    "build": "lerna run build --parallel --scope \"@huangancheng/*\"",
     "pub": "lerna publish",
     "pub-local": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
-    "lint": "eslint \"./**/*.{ts,tsx}\" --cache --cache-location .cache/.eslintcache --report-unused-disable-directives --ext .ts,.tsx",
-    "stylelint": "stylelint \"./**/*.{ts,tsx}\" --cache --cache-location .cache/.stylelintcache",
+    "lint": "eslint \"./**/*.{ts,tsx}\" --cache --report-unused-disable-directives --ext .ts,.tsx",
+    "stylelint": "stylelint \"./**/*.{ts,tsx}\" --cache",
     "prettier": "prettier --write \"./**/*.{ts,tsx}\"",
     "prettier-check": "prettier --check \"./**/*.{ts,tsx}\"",
     "release": "yarn prettier && yarn lint && yarn stylelint && yarn build && yarn pub",

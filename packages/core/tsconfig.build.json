@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "sourceMap": true,
+    "target": "esnext",
+    "rootDir": "./src",
+    "outDir": "./lib/types",
+    "paths": {}
+  }
+}

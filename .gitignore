@@ -6,6 +6,8 @@
 node_modules/
 *.log
 *.tsbuildinfo
+.eslintcache
+.stylelintcache
 package-lock.json
 
 # packages
