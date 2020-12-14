@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/macro';
+// @ts-ignore
 import { formateDate, DateObject } from '@huangancheng/shared';
 
 export interface ButtonProps {

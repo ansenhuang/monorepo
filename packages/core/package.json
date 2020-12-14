@@ -6,16 +6,15 @@
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
   "unpkg": "./lib/umd/index.js",
-  "esnext": "./lib/types/index.js",
   "typings": "./lib/types/index.d.ts",
   "scripts": {
     "clean": "rimraf ./lib",
-    "build": "run-p \"build:*\"",
+    "build": "yarn clean && run-p \"build:*\"",
     "build:types": "tsc -b ./tsconfig.build.json",
-    "build:cjs": "node ../../scripts/build cjs",
     "build:esm": "node ../../scripts/build esm",
+    "build:cjs": "node ../../scripts/build cjs",
     "build:umd": "cross-env BABEL_ENV=rollup rollup -c ../../rollup.config.js",
-    "dev": "run-p \"build:types -- --watch\""
+    "dev": "run-p \"build:types --watch\" \"build:esm --watch\""
   },
   "dependencies": {
     "react-is": "^16.8.0 || ^17.0.0",

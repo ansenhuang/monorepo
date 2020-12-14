@@ -46,5 +46,6 @@ module.exports = {
         patterns: ['!styled-components/macro'],
       },
     ],
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
 };

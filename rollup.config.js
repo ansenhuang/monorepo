@@ -9,7 +9,7 @@ const { terser } = require('rollup-plugin-terser');
 const moduleName = '@huangancheng/' + path.basename(process.cwd());
 const input = './src/index';
 const globals = {
-  react: 'React',
+  'react': 'React',
   'react-dom': 'ReactDOM',
   'styled-components': 'StyledComponents',
 };

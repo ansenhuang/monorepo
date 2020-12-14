@@ -13,7 +13,7 @@ const validBundles = [
 ];
 
 async function run(argv) {
-  const { bundle, outDir: relativeOutDir, verbose } = argv;
+  const { bundle, outDir: relativeOutDir, verbose, watch } = argv;
 
   if (validBundles.indexOf(bundle) === -1) {
     throw new TypeError(
@@ -51,7 +51,8 @@ async function run(argv) {
     '--ignore',
     // Need to put these patterns in quotes otherwise they might be evaluated by the used terminal.
     `"${ignore.join('","')}"`,
-  ].join(' ');
+    watch && '--watch',
+  ].filter(Boolean).join(' ');
 
   if (verbose) {
     // eslint-disable-next-line no-console
@@ -80,7 +81,8 @@ yargs
           type: 'string',
         })
         .option('out-dir', { default: './lib', type: 'string' })
-        .option('verbose', { type: 'boolean' });
+        .option('verbose', { type: 'boolean' })
+        .option('watch', { type: 'boolean' });
     },
     handler: run,
   })
