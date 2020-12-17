@@ -1,30 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Button from '@huangancheng/core';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
+import { RouterContext } from './router';
 
-console.log(9);
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <Button>Button from packages</Button>
-      </header>
-    </div>
-  );
+interface Pages {
+  [pathname: string]: React.LazyExoticComponent<() => JSX.Element>;
 }
+const pages: Pages = {
+  '/': lazy(() => import('./pages/app')),
+  '/package': lazy(() => import('./pages/package')),
+};
+
+const App = () => {
+  const [pathname, setPathname] = useState(window.location.pathname);
+  const Page = pages[pathname];
+
+  useEffect(() => {
+    const onHistoryChange = (e: PopStateEvent) => {
+      setPathname(window.location.pathname);
+    };
+    window.addEventListener('popstate', onHistoryChange);
+    return () => {
+      window.removeEventListener('popstate', onHistoryChange);
+    };
+  }, []);
+
+  return (
+    <RouterContext.Provider value={{ pathname, setPathname }}>
+      <Suspense fallback={null}>
+        {Page ? <Page /> : <h1 style={{ textAlign: 'center' }}>404</h1>}
+      </Suspense>
+    </RouterContext.Provider>
+  );
+};
 
 export default App;
