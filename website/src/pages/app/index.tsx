@@ -1,14 +1,21 @@
 import React from 'react';
+import { Link } from '@axe/router';
+import routes from 'src/constants/routes';
 import logo from './logo.svg';
 import styles from './index.module.css';
-import { Link } from '../../router';
 
 const Page = () => {
   return (
     <div className={styles['app']}>
       <header className={styles['app-header']}>
         <img src={logo} className={styles['app-logo']} alt="logo" />
-        <Link to="/package">package</Link>
+        <div className={styles['app-routes']}>
+          {routes.map(({ name, props: { path } }) => (
+            <Link key={path} to={path}>
+              {name}
+            </Link>
+          ))}
+        </div>
       </header>
     </div>
   );

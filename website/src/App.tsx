@@ -1,21 +1,12 @@
-import React, { lazy, Suspense } from 'react';
-import { Router, Route } from './router';
-
-const pages = [
-  {
-    path: '/',
-    Component: lazy(() => import('./pages/app')),
-  },
-  {
-    path: '/package',
-    Component: lazy(() => import('./pages/package')),
-  },
-];
+import React, { Suspense } from 'react';
+import { Router, Route } from '@axe/router';
+import routes from 'src/constants/routes';
+import './App.css';
 
 const App = () => {
   return (
     <Router>
-      {pages.map(({ path, Component, ...restProps }) => (
+      {routes.map(({ props: { path, Component, ...restProps } }) => (
         <Route key={path} path={path} {...restProps}>
           <Suspense fallback={null}>
             <Component />

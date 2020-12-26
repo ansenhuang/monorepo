@@ -29,6 +29,15 @@
   color: white;
 }
 
+.app-routes {
+  display: flex;
+  justify-content: center;
+}
+
+.app-routes a {
+  margin: 10px;
+}
+
 @keyframes app-logo-spin {
   from {
     transform: rotate(0deg);
