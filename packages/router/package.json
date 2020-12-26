@@ -1,0 +1,51 @@
+{
+  "name": "@axe/router",
+  "version": "0.0.0",
+  "author": "huangancheng",
+  "description": "No description.",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "unpkg": "./lib/umd/index.js",
+  "typings": "./lib/types/index.d.ts",
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "build": "yarn clean && run-p \"build:*\"",
+    "build:types": "tsc -b ./tsconfig.build.json",
+    "build:esm": "node ../../scripts/build esm",
+    "build:cjs": "node ../../scripts/build cjs",
+    "build:umd": "cross-env BABEL_ENV=rollup rollup -c ../../rollup.config.js",
+    "dev": "run-p \"build:types --watch\" \"build:esm --watch\""
+  },
+  "dependencies": {
+    "@axe/context": "^0.0.0"
+  },
+  "peerDependencies": {
+    "@types/react": "^16.8.6 || ^17.0.0",
+    "@types/react-dom": "^16.8.6 || ^17.0.0",
+    "react": "^16.8.0 || ^17.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "typescript"
+  ],
+  "homepage": "https://github.com/ansenhuang/monorepo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansenhuang/monorepo.git",
+    "directory": "packages/router"
+  },
+  "bugs": {
+    "url": "https://github.com/ansenhuang/monorepo/issues"
+  }
+}

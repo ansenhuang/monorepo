@@ -11,7 +11,7 @@ module.exports = {
   extends: [
     'plugin:import/recommended',
     'plugin:import/typescript',
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from @typescript-eslint/eslint-plugin
+    // 'plugin:@typescript-eslint/recommended', // Uses the recommended rules from @typescript-eslint/eslint-plugin
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -46,6 +46,5 @@ module.exports = {
         patterns: ['!styled-components/macro'],
       },
     ],
-    '@typescript-eslint/ban-ts-comment': 'off',
   },
 };
