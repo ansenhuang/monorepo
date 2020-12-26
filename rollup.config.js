@@ -6,7 +6,7 @@ const replace = require('@rollup/plugin-replace');
 const nodeGlobals = require('rollup-plugin-node-globals');
 const { terser } = require('rollup-plugin-terser');
 
-const moduleName = '@huangancheng/' + path.basename(process.cwd());
+const moduleName = '@axe/' + path.basename(process.cwd());
 const input = './src/index';
 const globals = {
   'react': 'React',

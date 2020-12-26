@@ -7,7 +7,7 @@ export interface DateObject {
   second: number;
 }
 
-export const formateDate = (date: Date) => {
+export const formateDate = (date: Date): string => {
   return (
     [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-') +
     [date.getHours(), date.getMinutes(), date.getSeconds()].join(':')
