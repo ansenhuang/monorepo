@@ -8,13 +8,12 @@
   "unpkg": "./lib/umd/index.js",
   "typings": "./lib/types/index.d.ts",
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf lib",
     "build": "yarn clean && run-p \"build:*\"",
-    "build:types": "tsc -b ./tsconfig.build.json",
-    "build:esm": "node ../../scripts/build esm",
-    "build:cjs": "node ../../scripts/build cjs",
-    "build:umd": "cross-env BABEL_ENV=rollup rollup -c ../../rollup.config.js",
-    "dev": "run-p \"build:types --watch\" \"build:esm --watch\""
+    "build:types": "tsc -b tsconfig.build.json",
+    "build:esm": "cross-env BUNDLED_TYPE=esm babel src --config-file ../../babel.config.js --out-dir lib/esm --extensions .js,.jsx,.ts,.tsx",
+    "build:cjs": "cross-env BUNDLED_TYPE=cjs babel src --config-file ../../babel.config.js --out-dir lib/cjs --extensions .js,.jsx,.ts,.tsx",
+    "build:umd": "cross-env BUNDLED_TYPE=esm rollup -c ../../rollup.config.js"
   },
   "dependencies": {},
   "peerDependencies": {

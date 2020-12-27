@@ -11,6 +11,7 @@ export interface RootProviderProps {
   children?: React.ReactNode;
 }
 
+/* eslint-disable react-hooks/rules-of-hooks */
 export default class RootContextClass {
   private stateStore: StateStore = new Map();
   private stateQueue: StateQueue = new Map();
@@ -22,6 +23,7 @@ export default class RootContextClass {
   }
 
   public RootProvider: React.FC<RootProviderProps> = ({ value, initialValue, children }) => {
+    /* eslint-disable react-hooks/exhaustive-deps */
     useMemo(() => {
       if (initialValue) {
         this.setDefaultStore(initialValue);
@@ -76,6 +78,7 @@ export default class RootContextClass {
       }
     };
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
       // 推入队列，一个值在多个组件中使用可以同步状态更新
       this.pushStateQueue(key, forceUpdate);

@@ -9,7 +9,7 @@ const { terser } = require('rollup-plugin-terser');
 const moduleName = '@axe/' + path.basename(process.cwd());
 const input = './src/index';
 const globals = {
-  'react': 'React',
+  react: 'React',
   'react-dom': 'ReactDOM',
   'styled-components': 'StyledComponents',
 };
@@ -17,7 +17,7 @@ const babelOptions = {
   exclude: /node_modules/,
   // We are using @babel/plugin-transform-runtime
   runtimeHelpers: true,
-  extensions: ['.js', '.ts', '.tsx'],
+  extensions: ['.js', '.jsx', '.ts', '.tsx'],
   configFile: path.resolve(__dirname, './babel.config.js'),
 };
 const commonjsOptions = {

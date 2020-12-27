@@ -1,16 +1,31 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-.DS_Store
+# editor
 .idea/
 .vscode/
-.cache/
+
+# dependencies
 node_modules/
-*.log
+.pnp/
+.pnp.js
+
+# testing
+coverage/
+
+# production
+build/
+storybook-static/
+lib/
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+*.log*
 *.tsbuildinfo
 .eslintcache
 .stylelintcache
 package-lock.json
-
-# packages
-lib/
-build/
-storybook-static/
+macros-error-codes.json

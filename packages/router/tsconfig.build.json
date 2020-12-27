@@ -4,10 +4,9 @@
     "noEmit": false,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
     "rootDir": "./src",
     "outDir": "./lib/types",
     "paths": {}
-  }
+  },
+  "include": ["./src"]
 }

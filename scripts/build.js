@@ -1,92 +1,199 @@
+'use strict';
+
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = 'production';
+process.env.NODE_ENV = 'production';
+
+// Makes the script crash on unhandled rejections instead of silently
+// ignoring them. In the future, promise rejections that are not handled will
+// terminate the Node.js process with a non-zero exit code.
+process.on('unhandledRejection', (err) => {
+  throw err;
+});
+
+// Ensure environment variables are read.
+require('../website/config/env');
+
 const path = require('path');
-const childProcess = require('child_process');
-const { promisify } = require('util');
-const yargs = require('yargs');
+const chalk = require('react-dev-utils/chalk');
+const fs = require('fs-extra');
+const bfj = require('bfj');
+const webpack = require('webpack');
+const configFactory = require('../website/config/webpack.config');
+const paths = require('../website/config/paths');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
+const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
+const printBuildError = require('react-dev-utils/printBuildError');
 
-const exec = promisify(childProcess.exec);
+const measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
+const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
+const useYarn = fs.existsSync(paths.yarnLockFile);
 
-const validBundles = [
-  // build for node using commonJS modules
-  'cjs',
-  // build with a hardcoded target using ES6 modules
-  'esm',
-];
+// These sizes are pretty large. We'll warn for bundles exceeding them.
+const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
+const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 
-async function run(argv) {
-  const { bundle, outDir: relativeOutDir, verbose, watch } = argv;
+const isInteractive = process.stdout.isTTY;
 
-  if (validBundles.indexOf(bundle) === -1) {
-    throw new TypeError(
-      `Unrecognized bundle '${bundle}'. Did you mean one of "${validBundles.join('", "')}"?`,
-    );
-  }
-
-  const env = {
-    NODE_ENV: 'production',
-    BABEL_ENV: bundle,
-    MUI_BUILD_VERBOSE: verbose,
-  };
-  const babelConfigPath = path.resolve(__dirname, '../babel.config.js');
-  const srcDir = path.resolve('./src');
-  const extensions = ['.ts', '.tsx'];
-  const ignore = [
-    '**/*.test.ts',
-    '**/*.test.tsx',
-    '**/*.spec.ts',
-    '**/*.spec.tsx',
-    '**/*.d.ts',
-  ];
-
-  const outDir = path.resolve(relativeOutDir, bundle);
-
-  const command = [
-    'yarn babel',
-    '--config-file',
-    babelConfigPath,
-    '--extensions',
-    `"${extensions.join(',')}"`,
-    srcDir,
-    '--out-dir',
-    outDir,
-    '--ignore',
-    // Need to put these patterns in quotes otherwise they might be evaluated by the used terminal.
-    `"${ignore.join('","')}"`,
-    watch && '--watch',
-  ].filter(Boolean).join(' ');
-
-  if (verbose) {
-    // eslint-disable-next-line no-console
-    console.log(`running '${command}' with ${JSON.stringify(env)}`);
-  }
-
-  const { stderr, stdout } = await exec(command, { env: { ...process.env, ...env } });
-  if (stderr) {
-    throw new Error(`'${command}' failed with \n${stderr}`);
-  }
-
-  if (verbose) {
-    // eslint-disable-next-line no-console
-    console.log(stdout);
-  }
+// Warn and crash if required files are missing
+if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+  process.exit(1);
 }
 
-yargs
-  .command({
-    command: '$0 <bundle>',
-    description: 'build package',
-    builder: (command) => {
-      return command
-        .positional('bundle', {
-          description: `Valid bundles: "${validBundles.join('" | "')}"`,
-          type: 'string',
-        })
-        .option('out-dir', { default: './lib', type: 'string' })
-        .option('verbose', { type: 'boolean' })
-        .option('watch', { type: 'boolean' });
-    },
-    handler: run,
+const argv = process.argv.slice(2);
+const writeStatsJson = argv.indexOf('--stats') !== -1;
+
+// Generate configuration
+const config = configFactory('production');
+
+// We require that you explicitly set browsers and do not fall back to
+// browserslist defaults.
+const { checkBrowsers } = require('react-dev-utils/browsersHelper');
+checkBrowsers(paths.appPath, isInteractive)
+  .then(() => {
+    // First, read the current file sizes in build directory.
+    // This lets us display how much they changed later.
+    return measureFileSizesBeforeBuild(paths.appBuild);
   })
-  .help()
-  .strict(true)
-  .version(false)
-  .parse();
+  .then((previousFileSizes) => {
+    // Remove all content but keep the directory so that
+    // if you're in it, you don't end up in Trash
+    fs.emptyDirSync(paths.appBuild);
+    // Merge with the public folder
+    copyPublicFolder();
+    // Start the webpack build
+    return build(previousFileSizes);
+  })
+  .then(
+    ({ stats, previousFileSizes, warnings }) => {
+      if (warnings.length) {
+        console.log(chalk.yellow('Compiled with warnings.\n'));
+        console.log(warnings.join('\n\n'));
+        console.log(
+          '\nSearch for the ' +
+            chalk.underline(chalk.yellow('keywords')) +
+            ' to learn more about each warning.',
+        );
+        console.log(
+          'To ignore, add ' + chalk.cyan('// eslint-disable-next-line') + ' to the line before.\n',
+        );
+      } else {
+        console.log(chalk.green('Compiled successfully.\n'));
+      }
+
+      console.log('File sizes after gzip:\n');
+      printFileSizesAfterBuild(
+        stats,
+        previousFileSizes,
+        paths.appBuild,
+        WARN_AFTER_BUNDLE_GZIP_SIZE,
+        WARN_AFTER_CHUNK_GZIP_SIZE,
+      );
+      console.log();
+
+      const appPackage = require(paths.appPackageJson);
+      const publicUrl = paths.publicUrlOrPath;
+      const publicPath = config.output.publicPath;
+      const buildFolder = path.relative(process.cwd(), paths.appBuild);
+      printHostingInstructions(appPackage, publicUrl, publicPath, buildFolder, useYarn);
+    },
+    (err) => {
+      const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';
+      if (tscCompileOnError) {
+        console.log(
+          chalk.yellow(
+            'Compiled with the following type errors (you may want to check these before deploying your app):\n',
+          ),
+        );
+        printBuildError(err);
+      } else {
+        console.log(chalk.red('Failed to compile.\n'));
+        printBuildError(err);
+        process.exit(1);
+      }
+    },
+  )
+  .catch((err) => {
+    if (err && err.message) {
+      console.log(err.message);
+    }
+    process.exit(1);
+  });
+
+// Create the production build and print the deployment instructions.
+function build(previousFileSizes) {
+  console.log('Creating an optimized production build...');
+
+  const compiler = webpack(config);
+  return new Promise((resolve, reject) => {
+    compiler.run((err, stats) => {
+      let messages;
+      if (err) {
+        if (!err.message) {
+          return reject(err);
+        }
+
+        let errMessage = err.message;
+
+        // Add additional information for postcss errors
+        if (Object.prototype.hasOwnProperty.call(err, 'postcssNode')) {
+          errMessage += '\nCompileError: Begins at CSS selector ' + err['postcssNode'].selector;
+        }
+
+        messages = formatWebpackMessages({
+          errors: [errMessage],
+          warnings: [],
+        });
+      } else {
+        messages = formatWebpackMessages(
+          stats.toJson({ all: false, warnings: true, errors: true }),
+        );
+      }
+      if (messages.errors.length) {
+        // Only keep the first error. Others are often indicative
+        // of the same problem, but confuse the reader with noise.
+        if (messages.errors.length > 1) {
+          messages.errors.length = 1;
+        }
+        return reject(new Error(messages.errors.join('\n\n')));
+      }
+      if (
+        process.env.CI &&
+        (typeof process.env.CI !== 'string' || process.env.CI.toLowerCase() !== 'false') &&
+        messages.warnings.length
+      ) {
+        console.log(
+          chalk.yellow(
+            '\nTreating warnings as errors because process.env.CI = true.\n' +
+              'Most CI servers set it automatically.\n',
+          ),
+        );
+        return reject(new Error(messages.warnings.join('\n\n')));
+      }
+
+      const resolveArgs = {
+        stats,
+        previousFileSizes,
+        warnings: messages.warnings,
+      };
+
+      if (writeStatsJson) {
+        return bfj
+          .write(paths.appBuild + '/bundle-stats.json', stats.toJson())
+          .then(() => resolve(resolveArgs))
+          .catch((error) => reject(new Error(error)));
+      }
+
+      return resolve(resolveArgs);
+    });
+  });
+}
+
+function copyPublicFolder() {
+  fs.copySync(paths.appPublic, paths.appBuild, {
+    dereference: true,
+    filter: (file) => file !== paths.appHtml,
+  });
+}

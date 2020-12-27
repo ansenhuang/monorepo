@@ -1,63 +1,63 @@
-const path = require('path');
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
-module.exports = function getBabelConfig(api) {
-  const useESModules = api.env(['esm', 'rollup']);
+const babelPresetReactApp = require('babel-preset-react-app');
+const hasJsxRuntime = (() => {
+  if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
+    return false;
+  }
 
-  const presets = [
-    [
-      '@babel/preset-env',
-      {
-        bugfixes: true,
-        debug: process.env.MUI_BUILD_VERBOSE === 'true',
-        modules: useESModules ? false : 'commonjs',
-        shippedProposals: false,
-      },
-    ],
-    '@babel/preset-react',
-    '@babel/preset-typescript',
-  ];
+  try {
+    require.resolve('react/jsx-runtime');
+    return true;
+  } catch (e) {
+    return false;
+  }
+})();
 
-  const plugins = [
-    [
-      'babel-plugin-macros',
-      {
-        muiError: {
-          errorCodesPath: path.join(__dirname, '.cache/error-codes.json'),
-          missingError: process.env.MUI_EXTRACT_ERROR_CODES === 'true' ? 'write' : 'annotate',
-        },
-      },
-    ],
-    'babel-plugin-optimize-clsx',
-    '@babel/plugin-transform-react-constant-elements',
-    // Need the following 3 proposals for all targets in .browserslistrc.
-    // With our usage the transpiled loose mode is equivalent to spec mode.
-    ['@babel/plugin-proposal-decorators', { legacy: true }],
-    ['@babel/plugin-proposal-class-properties', { loose: true }],
-    ['@babel/plugin-proposal-private-methods', { loose: true }],
-    '@babel/plugin-proposal-export-default-from',
-    '@babel/plugin-syntax-dynamic-import',
-    ['@babel/plugin-proposal-object-rest-spread', { loose: true }],
-    [
-      '@babel/plugin-transform-runtime',
-      {
-        useESModules,
-        // any package needs to declare 7.4.4 as a runtime dependency. default is ^7.0.0
-        version: '^7.4.4',
-      },
-    ],
-  ];
+module.exports = function (api) {
+  api.cache(true);
+
+  const isBundledLib = Boolean(process.env.BUNDLED_TYPE);
+  const useESModules = process.env.BUNDLED_TYPE === 'esm';
+  const isEnvTest = process.env.NODE_ENV === 'test';
+
+  const reactAppConfig = babelPresetReactApp(api, {
+    useESModules: isBundledLib ? useESModules : true,
+    runtime: hasJsxRuntime ? 'automatic' : 'classic',
+  });
+  const basePresets = !isBundledLib ? reactAppConfig.presets : reactAppConfig.presets.slice(1);
+  const basePlugins = reactAppConfig.plugins;
+  const baseOverrides = reactAppConfig.overrides;
 
   return {
-    presets,
-    plugins,
-    ignore: [
-      /@babel[\\|/]runtime/, // Fix a Windows issue.
-      '**/*.test.js',
-      '**/*.test.ts',
-      '**/*.test.tsx',
-      '**/*.spec.ts',
-      '**/*.spec.tsx',
-      '**/*.d.ts',
+    presets: [
+      isBundledLib && [
+        '@babel/preset-env',
+        {
+          bugfixes: true,
+          modules: useESModules ? false : 'commonjs',
+          shippedProposals: false,
+        },
+      ],
+      ...basePresets,
+    ].filter(Boolean),
+    plugins: [
+      ...basePlugins,
+      // 'babel-plugin-optimize-clsx',
+      // '@babel/plugin-transform-react-constant-elements',
     ],
+    overrides: [...baseOverrides],
+    ignore: !isEnvTest
+      ? [
+          /@babel[\\|/]runtime/, // Fix a Windows issue.
+          '**/*.test.js',
+          '**/*.test.jsx',
+          '**/*.test.ts',
+          '**/*.test.tsx',
+          '**/*.spec.ts',
+          '**/*.spec.tsx',
+          '**/*.d.ts',
+        ]
+      : [],
   };
 };
