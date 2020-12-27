@@ -24,7 +24,7 @@
     "release-local": "yarn lint && yarn build && yarn pub-local",
     "lint": "yarn prettier && yarn eslint && yarn stylelint",
     "eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --cache --report-unused-disable-directives --ext .ts,.tsx",
-    "stylelint": "stylelint \"**/*.{js,jsx,ts,tsx,css}\" --cache",
+    "stylelint": "stylelint \"**/*.{js,jsx,ts,tsx}\" --cache",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css,json,md}\"",
     "prettier-check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,json,md}\"",
     "test": "node scripts/test.js"
@@ -119,6 +119,7 @@
     "style-loader": "1.3.0",
     "stylelint": "^13.7.2",
     "stylelint-config-standard": "^20.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",
     "stylelint-webpack-plugin": "^2.1.1",
     "terser-webpack-plugin": "4.2.3",

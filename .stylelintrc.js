@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['stylelint-config-standard'],
+  extends: ['stylelint-config-standard', 'stylelint-config-styled-components'],
   processors: ['stylelint-processor-styled-components'],
   rules: {
     'value-no-vendor-prefix': true,

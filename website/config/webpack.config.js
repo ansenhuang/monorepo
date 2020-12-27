@@ -670,7 +670,7 @@ module.exports = function (webpackEnv) {
       }),
       new StyleLintPlugin({
         // Plugin options
-        extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx', 'css'],
+        extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
         stylelintPath: require.resolve('stylelint'),
         context: paths.rootPath,
         cache: true,

@@ -14,6 +14,7 @@ const hasJsxRuntime = (() => {
 module.exports = {
   extends: ['react-app'],
   rules: {
+    strict: 'off',
     'react/react-in-jsx-scope': !hasJsxRuntime ? 'error' : 'off',
   },
 };
