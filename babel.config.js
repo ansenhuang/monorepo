@@ -13,6 +13,7 @@ module.exports = function (api) {
   const reactAppConfig = babelPresetReactApp(api, {
     useESModules: isBundledLib ? useESModules : true,
     runtime: hasJsxRuntime ? 'automatic' : 'classic',
+    absoluteRuntime: false,
   });
   const basePresets = !isBundledLib ? reactAppConfig.presets : reactAppConfig.presets.slice(1);
   const basePlugins = reactAppConfig.plugins;
