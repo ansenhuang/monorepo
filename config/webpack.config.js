@@ -285,7 +285,7 @@ module.exports = function (webpackEnv) {
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
       // https://github.com/facebook/create-react-app/issues/253
-      modules: ['node_modules', paths.rootNodeModules].concat(modules.additionalModulePaths || []),
+      modules: ['node_modules', paths.appNodeModules].concat(modules.additionalModulePaths || []),
       // These are the reasonable defaults supported by the Node ecosystem.
       // We also include JSX as a common component filename extension to support
       // some tools, although we do not recommend using it, see:
@@ -316,7 +316,7 @@ module.exports = function (webpackEnv) {
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
         new ModuleScopePlugin(
-          [paths.appSrc, paths.rootPackages],
+          [paths.appSrc, paths.appPackages],
           [paths.appPackageJson, reactRefreshOverlayEntry],
         ),
       ],
@@ -364,7 +364,7 @@ module.exports = function (webpackEnv) {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              include: [paths.appSrc, paths.rootPackages],
+              include: [paths.appSrc, paths.appPackages],
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve('babel-preset-react-app/webpack-overrides'),
@@ -578,7 +578,7 @@ module.exports = function (webpackEnv) {
       // to restart the development server for webpack to discover it. This plugin
       // makes the discovery automatic so you don't have to restart.
       // See https://github.com/facebook/create-react-app/issues/186
-      isEnvDevelopment && new WatchMissingNodeModulesPlugin(paths.rootNodeModules),
+      isEnvDevelopment && new WatchMissingNodeModulesPlugin(paths.appNodeModules),
       isEnvProduction &&
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
@@ -631,7 +631,7 @@ module.exports = function (webpackEnv) {
       useTypeScript &&
         new ForkTsCheckerWebpackPlugin({
           typescript: resolve.sync('typescript', {
-            basedir: paths.rootNodeModules,
+            basedir: paths.appNodeModules,
           }),
           async: isEnvDevelopment,
           checkSyntacticErrors: true,
@@ -661,22 +661,21 @@ module.exports = function (webpackEnv) {
         extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
         formatter: require.resolve('react-dev-utils/eslintFormatter'),
         eslintPath: require.resolve('eslint'),
-        context: paths.rootPath,
+        context: paths.appPath,
         cache: true,
         // ESLint class options
-        cwd: paths.rootPath,
-        files: ['website/src', 'packages/**/src/**/*'],
+        cwd: paths.appPath,
+        files: ['website', 'packages/**/src/**/*'],
         resolvePluginsRelativeTo: __dirname,
       }),
       new StyleLintPlugin({
         // Plugin options
-        extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
         stylelintPath: require.resolve('stylelint'),
-        context: paths.rootPath,
+        context: paths.appPath,
         cache: true,
         // StyleLint class options
-        cwd: paths.rootPath,
-        files: ['website/src', 'packages/**/src/**/*'],
+        cwd: paths.appPath,
+        files: ['website', 'packages/**/src/**/*'],
         resolvePluginsRelativeTo: __dirname,
         emitWarning: true,
       }),

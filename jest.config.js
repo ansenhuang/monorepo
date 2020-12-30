@@ -2,7 +2,7 @@ module.exports = {
   roots: ['<rootDir>/packages'],
   collectCoverageFrom: ['**/src/**/*.{js,jsx,ts,tsx}', '!**/*.d.ts'],
   setupFiles: ['react-app-polyfill/jsdom'],
-  setupFilesAfterEnv: ['<rootDir>/website/src/setupTests.ts'],
+  setupFilesAfterEnv: ['<rootDir>/config/jest/setupTests.ts'],
   testMatch: [
     '<rootDir>/**/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/**/src/**/*.{spec,test}.{js,jsx,ts,tsx}',
@@ -11,8 +11,8 @@ module.exports = {
   testRunner: 'jest-circus/runner',
   transform: {
     '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
-    '^.+\\.css$': '<rootDir>/website/config/jest/cssTransform.js',
-    '^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)': '<rootDir>/website/config/jest/fileTransform.js',
+    '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
+    '^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',
@@ -22,7 +22,6 @@ module.exports = {
   moduleNameMapper: {
     '^react-native$': 'react-native-web',
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-    '^src/(.*)$': '<rootDir>/website/src/$1',
     '^@axe/(.*)$': '<rootDir>/packages/$1/src',
   },
   moduleFileExtensions: [

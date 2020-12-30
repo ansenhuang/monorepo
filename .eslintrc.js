@@ -1,18 +1,7 @@
-const hasJsxRuntime = (() => {
-  if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
-    return false;
-  }
-
-  try {
-    require.resolve('react/jsx-runtime');
-    return true;
-  } catch (e) {
-    return false;
-  }
-})();
+const { hasJsxRuntime } = require('./config/utils');
 
 module.exports = {
-  extends: ['react-app'],
+  extends: ['react-app', 'react-app/jest'],
   rules: {
     strict: 'off',
     'react/react-in-jsx-scope': !hasJsxRuntime ? 'error' : 'off',

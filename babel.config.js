@@ -1,18 +1,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 const babelPresetReactApp = require('babel-preset-react-app');
-const hasJsxRuntime = (() => {
-  if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
-    return false;
-  }
-
-  try {
-    require.resolve('react/jsx-runtime');
-    return true;
-  } catch (e) {
-    return false;
-  }
-})();
+const { hasJsxRuntime } = require('./config/utils');
 
 module.exports = function (api) {
   api.cache(true);
@@ -56,6 +45,7 @@ module.exports = function (api) {
           '**/*.test.tsx',
           '**/*.spec.ts',
           '**/*.spec.tsx',
+          '**/__tests__/**/*',
           '**/*.d.ts',
         ]
       : [],

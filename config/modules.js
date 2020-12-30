@@ -23,7 +23,7 @@ function getAdditionalModulePaths(options = {}) {
 
   // We don't need to do anything if `baseUrl` is set to `node_modules`. This is
   // the default behavior.
-  if (path.relative(paths.rootNodeModules, baseUrlResolved) === '') {
+  if (path.relative(paths.appNodeModules, baseUrlResolved) === '') {
     return null;
   }
 
@@ -71,6 +71,27 @@ function getWebpackAliases(options = {}) {
   }
 }
 
+/**
+ * Get jest aliases based on the baseUrl of a compilerOptions object.
+ *
+ * @param {*} options
+ */
+function getJestAliases(options = {}) {
+  const baseUrl = options.baseUrl;
+
+  if (!baseUrl) {
+    return {};
+  }
+
+  const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
+
+  if (path.relative(paths.appPath, baseUrlResolved) === '') {
+    return {
+      '^src/(.*)$': '<rootDir>/src/$1',
+    };
+  }
+}
+
 function getPackagesAlias() {
   const command = ['yarn', 'workspaces', 'info', '--json'].join(' ');
   try {
@@ -84,7 +105,7 @@ function getPackagesAlias() {
     const alias = Object.keys(json.data).reduce((obj, key) => {
       const item = json.data[key];
       if (item.location.startsWith('packages/')) {
-        obj[key] = path.join(paths.rootPath, item.location, 'src/index');
+        obj[key] = path.join(paths.appPath, item.location, 'src/index');
       }
       return obj;
     }, {});
@@ -112,7 +133,7 @@ function getModules() {
   // based on tsconfig.json
   if (hasTsConfig) {
     const ts = require(resolve.sync('typescript', {
-      basedir: paths.rootNodeModules,
+      basedir: paths.appNodeModules,
     }));
     config = ts.readConfigFile(paths.appTsConfig, ts.sys.readFile).config;
     // Otherwise we'll check if there is jsconfig.json
@@ -133,6 +154,7 @@ function getModules() {
       ...packagesAlias,
       ...getWebpackAliases(options),
     },
+    jestAliases: getJestAliases(options),
     hasTsConfig,
   };
 }

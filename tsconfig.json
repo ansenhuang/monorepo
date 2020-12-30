@@ -25,10 +25,23 @@
     "rootDir": "./",
     "baseUrl": "./",
     "paths": {
-      "src/*": ["./website/src/*"],
+      "src/*": ["./website/*"],
       "@axe/*": ["./packages/*/src"]
     }
   },
-  "include": ["website/src", "packages/**/src"],
-  "exclude": ["**/node_modules", "**/lib", "**/build", "**/storybook-static"]
+  "include": ["website", "packages/**/src"],
+  "exclude": [
+    "**/node_modules",
+    "**/lib",
+    "**/build",
+    "**/storybook-static",
+    "**/*.test.js",
+    "**/*.test.jsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**/*",
+    "**/*.d.ts"
+  ]
 }

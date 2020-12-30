@@ -2,13 +2,12 @@
   "name": "monorepo",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "website"
+    "packages/*"
   ],
   "scripts": {
     "start": "yarn start-web",
     "start-web": "node scripts/start.js",
-    "start-storybook": "start-storybook -p 6006 -s website/public",
+    "start-storybook": "start-storybook -p 6006 -s public",
     "start-npm": "npx verdaccio",
     "build": "yarn clean && yarn build:types && yarn build:esm && yarn build:cjs && yarn build:umd",
     "build:types": "lerna run build:types --scope \"@axe/*\" --stream --sort --no-bail",
@@ -16,25 +15,27 @@
     "build:cjs": "lerna run build:cjs --scope \"@axe/*\" --parallel",
     "build:umd": "lerna run build:umd --scope \"@axe/*\" --stream --sort --no-bail",
     "build-web": "yarn build:types && yarn build:esm && node scripts/build.js",
-    "build-storybook": "build-storybook -s website/public",
+    "build-storybook": "build-storybook -s public",
     "clean": "lerna run clean --scope \"@axe/*\" --parallel",
     "pub": "lerna publish",
     "pub-local": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "release": "yarn lint && yarn build && yarn pub",
     "release-local": "yarn lint && yarn build && yarn pub-local",
+    "test": "node scripts/test.js",
     "lint": "yarn prettier && yarn eslint && yarn stylelint",
-    "eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --cache --report-unused-disable-directives --ext .ts,.tsx",
-    "stylelint": "stylelint \"**/*.{js,jsx,ts,tsx}\" --cache",
+    "eslint": "eslint \"**/*.{ts,tsx}\" --cache --report-unused-disable-directives --ext .ts,.tsx",
+    "stylelint": "stylelint \"**/*.{ts,tsx}\" --cache",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css,json,md}\"",
-    "prettier-check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,json,md}\"",
-    "test": "node scripts/test.js"
+    "prettier-check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,json,md}\""
   },
   "dependencies": {
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/react-is": "^16.7.0",
     "@types/styled-components": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-is": "^16.7.0",
     "styled-components": "^5.0.0",
     "web-vitals": "^0.2.4"
   },
@@ -48,7 +49,6 @@
     "@storybook/addon-actions": "^6.1.11",
     "@storybook/addon-essentials": "^6.1.11",
     "@storybook/addon-links": "^6.1.11",
-    "@storybook/node-logger": "^6.1.11",
     "@storybook/react": "^6.1.11",
     "@svgr/webpack": "5.4.0",
     "@testing-library/jest-dom": "^5.11.4",

@@ -6,7 +6,7 @@ const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
-const appDirectory = path.join(__dirname, '..');
+const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
@@ -17,7 +17,7 @@ const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
 const publicUrlOrPath = getPublicUrlOrPath(
   process.env.NODE_ENV === 'development',
-  require(resolveApp('../package.json')).homepage,
+  require(resolveApp('package.json')).homepage,
   process.env.PUBLIC_URL,
 );
 
@@ -52,21 +52,20 @@ const resolveModule = (resolveFn, filePath) => {
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
-  appBuild: resolveApp('../build'),
+  appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, 'src/index'),
-  appPackageJson: resolveApp('../package.json'),
-  appSrc: resolveApp('src'),
-  appTsConfig: resolveApp('../tsconfig.json'),
-  appJsConfig: resolveApp('../jsconfig.json'),
-  yarnLockFile: resolveApp('../yarn.lock'),
-  testsSetup: resolveModule(resolveApp, 'src/setupTests'),
-  proxySetup: resolveApp('src/setupProxy.js'),
-  rootPath: resolveApp('..'),
-  rootPackages: resolveApp('../packages'),
-  rootNodeModules: resolveApp('../node_modules'),
-  swSrc: resolveModule(resolveApp, 'src/service-worker'),
+  appIndexJs: resolveModule(resolveApp, 'website/index'),
+  appPackageJson: resolveApp('package.json'),
+  appSrc: resolveApp('website'),
+  appPackages: resolveApp('packages'),
+  appTsConfig: resolveApp('tsconfig.json'),
+  appJsConfig: resolveApp('jsconfig.json'),
+  yarnLockFile: resolveApp('yarn.lock'),
+  testsSetup: resolveModule(resolveApp, 'config/jest/setupTests'),
+  proxySetup: resolveApp('config/setupProxy.js'),
+  appNodeModules: resolveApp('node_modules'),
+  swSrc: resolveModule(resolveApp, 'website/service-worker'),
   publicUrlOrPath,
 };
 

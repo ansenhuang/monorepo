@@ -46,7 +46,7 @@ const commonjsOptions = {
   },
 };
 const nodeOptions = {
-  extensions: ['.js', '.tsx', '.ts'],
+  extensions: ['.js', '.jsx', '.tsx', '.ts'],
 };
 
 function onwarn(warning) {
