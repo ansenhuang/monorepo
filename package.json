@@ -33,9 +33,12 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-is": "^16.7.0",
     "@types/styled-components": "^5.0.0",
+    "babel-plugin-transform-typescript-metadata": "^0.3.1",
+    "inversify": "^5.0.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-is": "^16.7.0",
+    "reflect-metadata": "^0.1.13",
     "styled-components": "^5.0.0",
     "web-vitals": "^0.2.4"
   },
