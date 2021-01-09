@@ -4,7 +4,14 @@ module.exports = {
     [
       'stylelint-processor-styled-components',
       {
-        parserPlugins: ['decorators-legacy'],
+        parserPlugins: [
+          'jsx',
+          'decorators-legacy',
+          'classProperties',
+          'exportExtensions',
+          'functionBind',
+          'functionSent',
+        ],
       },
     ],
   ],
