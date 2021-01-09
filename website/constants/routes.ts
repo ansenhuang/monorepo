@@ -25,6 +25,13 @@ const routes: Array<RouteItem> = [
       Component: lazy(() => import('src/pages/context')),
     },
   },
+  {
+    name: '依赖注入',
+    props: {
+      path: '/reflect',
+      Component: lazy(() => import('src/pages/reflect')),
+    },
+  },
 ];
 
 export default routes;
