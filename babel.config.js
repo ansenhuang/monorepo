@@ -54,6 +54,24 @@ module.exports = function (api) {
       '@babel/preset-typescript',
     ].filter(Boolean),
     plugins: [
+      [
+        'babel-plugin-import',
+        {
+          libraryName: 'antd',
+          libraryDirectory: 'lib',
+          style: 'css',
+        },
+        'antd',
+      ],
+      [
+        'babel-plugin-import',
+        {
+          libraryName: 'lodash',
+          libraryDirectory: '',
+          camel2DashComponentName: false,
+        },
+        'lodash',
+      ],
       // Experimental macros support. Will be documented after it's had some time
       // in the wild.
       'babel-plugin-macros',
