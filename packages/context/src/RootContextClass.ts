@@ -61,14 +61,14 @@ export default class RootContextClass {
     }
   }
 
-  public useRootState = (key: string) => {
+  public useRootState = <T = any>(key: string): [T, (newValue: T) => void] => {
     const [, setState] = useState({});
-    const value = this.stateStore.get(key);
+    const value: T = this.stateStore.get(key);
     const forceUpdate = useCallback(() => {
       // 触发react更新
       setState({});
     }, []);
-    const setValue = (newValue: any) => {
+    const setValue = (newValue: T) => {
       // 更新context的引用值
       this.stateStore.set(key, newValue);
       // 触发所有队列的更新

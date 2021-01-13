@@ -32,6 +32,13 @@ const routes: Array<RouteItem> = [
       Component: lazy(() => import('src/pages/reflect')),
     },
   },
+  {
+    name: '拖拽交互',
+    props: {
+      path: '/drag',
+      Component: lazy(() => import('src/pages/drag')),
+    },
+  },
 ];
 
 export default routes;
