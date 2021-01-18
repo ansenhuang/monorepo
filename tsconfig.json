@@ -43,6 +43,6 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/__tests__/**/*",
-    "**/*.d.ts"
+    "packages/**/*.d.ts"
   ]
 }
