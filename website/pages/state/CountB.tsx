@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRootState } from '@axe/context';
+import { useRootState } from './context';
 
 const Count = () => {
   const [count, setCount] = useRootState('count_b');

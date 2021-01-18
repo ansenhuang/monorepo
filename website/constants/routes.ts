@@ -26,6 +26,13 @@ const routes: Array<RouteItem> = [
     },
   },
   {
+    name: '常规状态',
+    props: {
+      path: '/state',
+      Component: lazy(() => import('src/pages/state')),
+    },
+  },
+  {
     name: '依赖注入',
     props: {
       path: '/reflect',
