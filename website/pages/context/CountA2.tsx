@@ -2,16 +2,16 @@ import React from 'react';
 import { useRootState } from '@axe/context';
 
 const Count = () => {
-  const [count, setCount] = useRootState('count_b');
+  const [count, setCount] = useRootState('count_a');
 
-  console.log('render B', count);
+  console.log('render A2', count);
 
   return (
     <div
-      style={{ textAlign: 'center', lineHeight: 5, backgroundColor: 'blue' }}
+      style={{ textAlign: 'center', lineHeight: 5, backgroundColor: 'red' }}
       onClick={() => setCount(count + 1)}
     >
-      B: {count}
+      A2: {count}
     </div>
   );
 };

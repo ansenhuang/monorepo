@@ -96,7 +96,10 @@ function getPackagesAlias() {
   const command = ['yarn', 'workspaces', 'info', '--json'].join(' ');
   try {
     const buffer = childProcess.execSync(command);
-    const json = JSON.parse(buffer.toString());
+    let json = JSON.parse(buffer.toString());
+    if (json.data) {
+      json = JSON.parse(json.data);
+    }
     const alias = Object.keys(json).reduce((obj, key) => {
       const item = json[key];
       if (key.startsWith('@axe/')) {

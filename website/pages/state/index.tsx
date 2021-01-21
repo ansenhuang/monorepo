@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RootProvider } from '@axe/context';
+import { RootProvider } from './context';
 import CountA from './CountA';
 import CountA2 from './CountA2';
 import CountB from './CountB';
@@ -9,6 +9,8 @@ const Page = () => {
   console.log('render Page');
 
   const [visible, setVisible] = useState(true);
+  const stateA = useState(0);
+  const stateB = useState(100);
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
@@ -26,9 +28,9 @@ const Page = () => {
   return (
     <div className={styles['page']}>
       <RootProvider
-        initialValue={{
-          count_a: 0,
-          count_b: 100,
+        value={{
+          count_a: stateA,
+          count_b: stateB,
         }}
       >
         <CountA />
