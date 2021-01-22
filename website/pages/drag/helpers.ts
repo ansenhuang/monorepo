@@ -8,3 +8,11 @@ export const getElementFromTarget = (
   }
   return current;
 };
+
+export const createHTMLElement = (tagName: string = 'div'): HTMLElement => {
+  const el = document.createElement(tagName);
+  el.textContent = 'clone';
+  el.style.height = '20px';
+  el.style.backgroundColor = '#ccc';
+  return el;
+};

@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRootState } from '@axe/context';
-import type { DragSource } from '../dragsource';
+import { useAtomState } from '@axe/context';
+import { dragSourceAtomState, cloneElementAtomState } from '../atoms';
+import { createHTMLElement } from '../helpers';
 
 const DragItem = styled.div`
   margin: 10px;
@@ -15,7 +16,8 @@ const DragItem = styled.div`
 export interface DragAreaProps {}
 
 const DragArea: React.FC<DragAreaProps> = () => {
-  const [dragSource] = useRootState<DragSource>('dragSource');
+  const [dragSource] = useAtomState(dragSourceAtomState);
+  const [cloneEl, setCloneEl] = useAtomState(cloneElementAtomState);
 
   const handleDrag = (e: React.DragEvent) => {
     // console.log('drag');
@@ -25,11 +27,14 @@ const DragArea: React.FC<DragAreaProps> = () => {
     const el = e.target as HTMLElement;
     el.style.opacity = '0.5';
     e.dataTransfer.setData('name', el.dataset.name || '');
+    setCloneEl(createHTMLElement());
   };
   const handleDragEnd = (e: React.DragEvent) => {
     // console.log('dragend');
     const el = e.target as HTMLElement;
     el.style.opacity = '';
+    setCloneEl(null);
+    cloneEl?.remove();
   };
 
   return (
