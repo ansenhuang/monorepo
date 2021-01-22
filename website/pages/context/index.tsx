@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { RootProvider } from '@axe/context';
 import CountA from './CountA';
 import CountA2 from './CountA2';
 import CountB from './CountB';
+import Content from './Content';
 import styles from './index.module.css';
 
 const Page = () => {
@@ -25,16 +25,10 @@ const Page = () => {
 
   return (
     <div className={styles['page']}>
-      <RootProvider
-        initialValue={{
-          count_a: 0,
-          count_b: 100,
-        }}
-      >
-        <CountA />
-        <CountB />
-        {visible && <CountA2 />}
-      </RootProvider>
+      <CountA />
+      <CountB />
+      {visible && <CountA2 />}
+      <Content />
     </div>
   );
 };

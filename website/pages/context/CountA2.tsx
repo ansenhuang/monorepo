@@ -1,8 +1,9 @@
 import React from 'react';
-import { useRootState } from '@axe/context';
+import { useAtomState } from '@axe/context';
+import { countAAtomState } from './atoms';
 
 const Count = () => {
-  const [count, setCount] = useRootState('count_a');
+  const [count, setCount] = useAtomState(countAAtomState);
 
   console.log('render A2', count);
 
