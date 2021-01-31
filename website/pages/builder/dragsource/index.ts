@@ -1,18 +1,9 @@
-import React from 'react';
 import Group from './Group';
 import Button from './Button';
 import Input from './Input';
+import type { DragSourceItem } from '../types';
 
-export interface DragSourceItem {
-  key: string;
-  name: string;
-  label: string;
-  Component: React.ComponentType<any>;
-  props: any;
-}
-export type DragSource = DragSourceItem[];
-
-const dragSource: DragSource = [
+const dragSource: DragSourceItem[] = [
   {
     key: 'group',
     name: 'group',
@@ -21,6 +12,7 @@ const dragSource: DragSource = [
     props: {
       title: '分组',
     },
+    children: [],
   },
   {
     key: 'button',

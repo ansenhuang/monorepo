@@ -1,22 +1,29 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Layout } from 'antd';
+import HeaderArea from './components/HeaderArea';
 import DragArea from './components/DragArea';
 import DropArea from './components/DropArea';
 import AttrArea from './components/AttrArea';
 
+const LayoutHeader = styled(Layout.Header)`
+  padding: 0;
+  height: 50px;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+`;
+
 const Page = () => {
   return (
     <Layout style={{ height: '100vh', overflow: 'hidden' }}>
-      <Layout.Header
-        style={{ height: 50, backgroundColor: '#fff', borderBottom: '1px solid #ccc' }}
-      >
-        <h1 style={{ margin: 0, lineHeight: '50px' }}>搭建器</h1>
-      </Layout.Header>
+      <LayoutHeader>
+        <HeaderArea />
+      </LayoutHeader>
       <Layout>
         <Layout.Sider width={200} theme="light">
           <DragArea />
         </Layout.Sider>
-        <Layout.Content>
+        <Layout.Content style={{ overflow: 'auto' }}>
           <DropArea />
         </Layout.Content>
         <Layout.Sider width={200} theme="light">

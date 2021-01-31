@@ -4,14 +4,20 @@ import ReactSortable from '@axe/sortable';
 import { useAtomState } from '@axe/context';
 import { dragSourceAtomState } from '../atoms';
 
+const DragBox = styled(ReactSortable)`
+  height: 100%;
+  overflow: auto;
+`;
 const DragItem = styled.div`
   margin: 10px;
   line-height: 2;
   text-align: center;
-  color: #666;
-  border: 1px solid #eee;
-  cursor: grab;
+  color: #008cff;
+  border: 1px solid #008cff;
   background-color: #fff;
+  cursor: grab;
+  position: relative;
+  z-index: 1;
 `;
 
 export interface DragAreaProps {}
@@ -20,21 +26,20 @@ const DragArea: React.FC<DragAreaProps> = () => {
   const [dragSource, setDragSource] = useAtomState(dragSourceAtomState);
 
   return (
-    <ReactSortable
+    <DragBox
       group={{
         name: 'drag',
         pull: 'clone',
       }}
       sort={false}
       animation={150}
-      style={{ height: '100%', overflow: 'hidden' }}
       items={dragSource}
-      setItems={setDragSource}
+      setItems={setDragSource as any}
     >
       {dragSource.map((item) => (
         <DragItem key={item.key}>{item.label}</DragItem>
       ))}
-    </ReactSortable>
+    </DragBox>
   );
 };
 
