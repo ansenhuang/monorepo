@@ -42,8 +42,8 @@ const routes: Array<RouteItem> = [
   {
     name: '拖拽交互',
     props: {
-      path: '/drag',
-      Component: lazy(() => import('src/pages/drag')),
+      path: '/sortable',
+      Component: lazy(() => import('src/pages/sortable')),
     },
   },
 ];
