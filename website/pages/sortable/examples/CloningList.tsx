@@ -31,7 +31,7 @@ const CloningList = () => {
       >
         {cloningItems.map((item) => (
           <div key={item.key} className="item" style={{ backgroundColor: '#fff6b2' }}>
-            {item.name}
+            {item.key}
           </div>
         ))}
       </ReactSortable>
@@ -46,10 +46,11 @@ const CloningList = () => {
         ghostClass="bg-blue"
         items={droppingItems}
         setItems={setDroppingItems}
+        cloneItem={(item) => ({ ...item, key: item.key + '_' + Date.now() })}
       >
         {droppingItems.map((item) => (
           <div key={item.key} className="item">
-            {item.name}
+            {item.key}
           </div>
         ))}
       </ReactSortable>

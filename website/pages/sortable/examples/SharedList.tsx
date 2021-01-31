@@ -31,7 +31,7 @@ const SharedList = () => {
       >
         {sharedItems.map((item) => (
           <div key={item.key} className="item" style={{ backgroundColor: '#fff6b2' }}>
-            {item.name}
+            {item.key}
           </div>
         ))}
       </ReactSortable>
@@ -49,7 +49,7 @@ const SharedList = () => {
       >
         {droppingItems.map((item) => (
           <div key={item.key} className="item">
-            {item.name}
+            {item.key}
           </div>
         ))}
       </ReactSortable>

@@ -22,7 +22,7 @@ const SimpleList = () => {
     >
       {items.map((item) => (
         <div key={item.key} className="item">
-          {item.name}
+          {item.key}
         </div>
       ))}
     </ReactSortable>
