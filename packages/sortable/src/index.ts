@@ -9,5 +9,5 @@ export type {
   SortableOptions,
 } from 'sortablejs';
 
-export * from './ReactSortable';
+export * from './types';
 export default ReactSortable;
