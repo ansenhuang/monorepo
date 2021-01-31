@@ -46,6 +46,13 @@ const routes: Array<RouteItem> = [
       Component: lazy(() => import('src/pages/sortable')),
     },
   },
+  {
+    name: '页面搭建',
+    props: {
+      path: '/builder',
+      Component: lazy(() => import('src/pages/builder')),
+    },
+  },
 ];
 
 export default routes;
