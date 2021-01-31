@@ -49,9 +49,13 @@ export const domEventHandlers: Partial<Record<EventTypes, EventHandler>> = {
     if (oldIndex != null && newIndex != null) {
       const newItems = [...items];
       const oldItem = newItems[oldIndex];
-      const newItem = newItems[newIndex];
-      newItems[oldIndex] = newItem;
-      newItems[newIndex] = oldItem;
+      if (oldIndex > newIndex) {
+        newItems.splice(oldIndex, 1);
+        newItems.splice(newIndex, 0, oldItem);
+      } else {
+        newItems.splice(newIndex + 1, 0, oldItem);
+        newItems.splice(oldIndex, 1);
+      }
       setItems(newItems);
     }
   },
