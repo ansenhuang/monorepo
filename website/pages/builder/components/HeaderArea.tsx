@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Input, notification } from 'antd';
 import { EyeOutlined, SaveOutlined } from '@ant-design/icons';
 import { useAtomState } from '@axe/context';
-import { dropDataAtomState } from '../atoms';
-import { setDropData } from '../helpers';
+import { pageDataAtomState } from '../atoms';
+import { setPageData } from '../helpers';
 
 const Header = styled.div`
   height: 100%;
@@ -53,11 +53,11 @@ const RightBox = styled.div`
 export interface HeaderAreaProps {}
 
 const HeaderArea: React.FC<HeaderAreaProps> = () => {
-  const [dropData] = useAtomState(dropDataAtomState);
+  const [pageData] = useAtomState(pageDataAtomState);
 
   const handleSave = () => {
-    setDropData(dropData);
-    const showValue = JSON.stringify(dropData, null, 2);
+    setPageData(pageData);
+    const showValue = JSON.stringify(pageData, null, 2);
     notification.success({
       duration: 10,
       message: '页面数据',

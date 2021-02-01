@@ -1,26 +1,63 @@
 import dragSource from './dragsource';
-import type { DropDataItem } from './types';
+import type { DropDataItem, PageData } from './types';
 
-const saveKey = '@@__SCHEMA__@@';
+const SCHEMA_KEY = '@@__SCHEMA__@@';
 
-export const getDropData = (): DropDataItem[] => {
-  const value = window.localStorage.getItem(saveKey);
+export const getPageData = (): PageData => {
+  const value = window.localStorage.getItem(SCHEMA_KEY);
   if (value) {
     try {
       return JSON.parse(value);
     } catch (error) {}
   }
-  return [];
+  return {
+    root: true,
+    children: [],
+  };
 };
 
-export const setDropData = (data: DropDataItem[]) => {
+export const setPageData = (data: PageData) => {
   const value = JSON.stringify(data);
-  window.localStorage.setItem(saveKey, value);
+  window.localStorage.setItem(SCHEMA_KEY, value);
 };
 
-export const normalizedDropData = (dropData: DropDataItem[]): DropDataItem[] =>
-  dropData.map((dropItem) => ({
-    ...dropItem,
-    Component: dragSource.find((dragItem) => dragItem.name === dropItem.name)?.Component || null,
-    children: dropItem.children ? normalizedDropData(dropItem.children) : undefined,
-  }));
+export const isPageData = (data: any): data is PageData => {
+  if (data && typeof data === 'object' && data.root && Array.isArray(data.children)) {
+    return true;
+  }
+  return false;
+};
+
+export const normalizedPageData = (pageData: PageData): PageData => {
+  const getChildren = (children: DropDataItem[]): DropDataItem[] => {
+    return children.map((child) => ({
+      ...child,
+      Component: dragSource.find((dragItem) => dragItem.name === child.name)?.Component || null,
+      children: child.children ? getChildren(child.children) : undefined,
+    }));
+  };
+  return {
+    ...pageData,
+    children: getChildren(pageData.children),
+  };
+};
+
+export const getParentFromPageData = (item: DropDataItem, pageData: PageData) => {
+  const getParent = (
+    children: DropDataItem[],
+    parent: PageData | DropDataItem,
+  ): PageData | DropDataItem | null => {
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (child.key === item.key) {
+        return parent;
+      }
+      if (child.children) {
+        return getParent(child.children, child);
+      }
+    }
+    return null;
+  };
+
+  return getParent(pageData.children, pageData);
+};

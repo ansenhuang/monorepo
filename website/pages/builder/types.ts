@@ -12,3 +12,8 @@ export interface DragSourceItem {
 export interface DropDataItem extends DragSourceItem {
   children?: DropDataItem[];
 }
+
+export interface PageData {
+  root: true;
+  children: DropDataItem[];
+}
