@@ -1,9 +1,6 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { Link } from '..';
+import { screen } from '@testing-library/react';
 
-test('renders link', () => {
-  render(<Link to="/">learn react</Link>);
+test('renders sortable', () => {
   const linkElement = screen.queryByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(linkElement).toBeNull();
 });

@@ -1,10 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Link } from '@axe/router';
-import { RootProvider } from '..';
 
 test('renders context', () => {
-  render(<RootProvider value={{}} />);
   const linkElement = screen.queryByText(/learn react/i);
   expect(linkElement).toBeNull();
 });

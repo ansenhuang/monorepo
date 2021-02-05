@@ -8,5 +8,6 @@
     "outDir": "./lib/types",
     "paths": {}
   },
-  "include": ["./src"]
+  "include": ["./src"],
+  "exclude": ["**/__tests__/**/*"]
 }
