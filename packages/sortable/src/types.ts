@@ -1,9 +1,9 @@
 import Sortable from 'sortablejs';
 
-export interface ItemInterface {
-  key: string;
-  [property: string]: any;
-}
+// export interface ItemInterface {
+//   key: string;
+//   [property: string]: any;
+// }
 
 export interface MemoStore<T> {
   sortable: Sortable | null;

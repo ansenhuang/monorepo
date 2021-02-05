@@ -1,9 +1,9 @@
 import React, { Children, cloneElement, useEffect, useMemo, useRef } from 'react';
 import Sortable from 'sortablejs';
 import { getObjectKeys, domEventHandlers } from './helpers';
-import type { ReactSortableProps, MemoStore, ItemInterface } from './types';
+import type { ReactSortableProps, MemoStore } from './types';
 
-const ReactSortable = <T extends ItemInterface>({
+const ReactSortable = <T>({
   tagName = 'div',
   id,
   className,
