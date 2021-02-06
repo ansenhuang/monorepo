@@ -16,9 +16,9 @@
     "build:umd": "cross-env BUNDLED_TYPE=esm rollup -c ../../rollup.config.js"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.167",
+    "@types/lodash": "^4.0.0",
     "@types/sortablejs": "^1.10.6",
-    "lodash": "^4.17.20",
+    "lodash": "^4.0.0",
     "sortablejs": "^1.13.0"
   },
   "peerDependencies": {
