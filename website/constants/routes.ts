@@ -47,12 +47,19 @@ const routes: Array<RouteItem> = [
     },
   },
   {
-    name: '页面搭建',
+    name: '智能表单',
     props: {
-      path: '/builder',
-      Component: lazy(() => import('src/pages/builder')),
+      path: '/form',
+      Component: lazy(() => import('src/pages/form')),
     },
   },
+  // {
+  //   name: '页面搭建',
+  //   props: {
+  //     path: '/builder',
+  //     Component: lazy(() => import('src/pages/builder')),
+  //   },
+  // },
 ];
 
 export default routes;
