@@ -21,13 +21,6 @@ const routes: Array<RouteItem> = [
   {
     name: '全局状态',
     props: {
-      path: '/context',
-      Component: lazy(() => import('src/pages/context')),
-    },
-  },
-  {
-    name: '常规状态',
-    props: {
       path: '/state',
       Component: lazy(() => import('src/pages/state')),
     },
@@ -53,13 +46,13 @@ const routes: Array<RouteItem> = [
       Component: lazy(() => import('src/pages/form')),
     },
   },
-  // {
-  //   name: '页面搭建',
-  //   props: {
-  //     path: '/builder',
-  //     Component: lazy(() => import('src/pages/builder')),
-  //   },
-  // },
+  {
+    name: '页面搭建',
+    props: {
+      path: '/builder',
+      Component: lazy(() => import('src/pages/builder')),
+    },
+  },
 ];
 
 export default routes;
