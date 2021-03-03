@@ -53,6 +53,13 @@ const routes: Array<RouteItem> = [
       Component: lazy(() => import('src/pages/builder')),
     },
   },
+  {
+    name: '页面渲染',
+    props: {
+      path: '/renderer',
+      Component: lazy(() => import('src/pages/renderer')),
+    },
+  },
 ];
 
 export default routes;
