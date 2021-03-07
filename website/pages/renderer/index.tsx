@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import renderer from '@axe/renderer';
+import { bootstrap, mount, unmount } from '@axe/renderer';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import SchemaEditor from './SchemaEditor';
+import materials from './materials';
 
-import type { PageSchema } from './types';
+import type { PageSchema } from '@axe/renderer';
 
 const Wrapper = styled.div`
   position: relative;
@@ -40,6 +41,11 @@ const pageSchemaStore = {
 
 const initialPageSchema = pageSchemaStore.get();
 
+// 渲染引擎初始化
+bootstrap({
+  materials,
+});
+
 const Page = () => {
   const [pageSchema, setPageSchema] = useState(initialPageSchema);
   const [editVisible, setEditVisible] = useState(false);
@@ -51,7 +57,10 @@ const Page = () => {
   };
 
   useEffect(() => {
-    renderer.mounted('#renderer', pageSchema);
+    mount('#renderer', pageSchema);
+    return () => {
+      unmount('#renderer');
+    };
   }, [pageSchema]);
 
   return (
@@ -68,6 +77,7 @@ const Page = () => {
         onCancel={() => setEditVisible(false)}
         onOk={handleEditOk}
       />
+      {/* 渲染引擎挂载节点 */}
       <div id="renderer"></div>
     </Wrapper>
   );

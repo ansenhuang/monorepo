@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface NodeSchema {
   key: string;
   name: string;
@@ -9,4 +11,8 @@ export interface NodeSchema {
 export interface PageSchema {
   root: true;
   nodes: NodeSchema[];
+}
+
+export interface BootstrapParams {
+  materials: Record<string, React.ComponentType<any>>;
 }
