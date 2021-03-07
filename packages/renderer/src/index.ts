@@ -1,3 +1,4 @@
 export * from './types';
-export * from './renderer';
-export { default as RenderEngine } from './RenderEngine';
+export { default as Renderer } from './Renderer';
+export { default as RenderEngine } from './components/RenderEngine';
+export { default } from './instance';

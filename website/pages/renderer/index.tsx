@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { bootstrap, mount, unmount } from '@axe/renderer';
+import renderer from '@axe/renderer';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -42,7 +42,7 @@ const pageSchemaStore = {
 const initialPageSchema = pageSchemaStore.get();
 
 // 渲染引擎初始化
-bootstrap({
+renderer.bootstrap({
   materials,
 });
 
@@ -57,10 +57,7 @@ const Page = () => {
   };
 
   useEffect(() => {
-    mount('#renderer', pageSchema);
-    return () => {
-      unmount('#renderer');
-    };
+    renderer.mount('#renderer', pageSchema);
   }, [pageSchema]);
 
   return (
