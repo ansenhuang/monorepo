@@ -1,10 +1,7 @@
 import React from 'react';
 
-export interface NodeSchema {
+export interface NodeSchema extends Omit<MaterialSchema, 'Component'> {
   key: string;
-  name: string;
-  label: string;
-  package?: PackageSchema;
   props: Record<string, any>;
   slots: Record<string, NodeSchema | NodeSchema[]>;
 }
@@ -16,6 +13,7 @@ export interface PageSchema {
 
 export interface MaterialSchema {
   name: string;
+  type?: 'form';
   label: string;
   package?: PackageSchema;
   Component: React.ComponentType<any> | null;
