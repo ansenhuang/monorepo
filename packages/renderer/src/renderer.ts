@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import RenderEngine from './components/RenderEngine';
 import { getDOMElement } from './utils';
 
-import type { PageSchema, MaterialSchema } from './types';
+import type { MaterialSchema } from './types';
+import type { RenderEngineProps } from './components/RenderEngine';
 
 class Renderer {
   private materials: MaterialSchema[] = [];
@@ -16,12 +17,12 @@ class Renderer {
     }
   }
 
-  mount(container: string | Element, schema: PageSchema) {
+  mount(container: string | Element, props: Omit<RenderEngineProps, 'materials'>) {
     const el = getDOMElement(container);
     if (el) {
       ReactDOM.render(
         React.createElement(RenderEngine, {
-          schema,
+          ...props,
           materials: this.materials,
         }),
         el,

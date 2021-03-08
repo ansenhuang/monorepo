@@ -2,11 +2,11 @@ import React from 'react';
 import { Input } from 'antd';
 
 export interface MyInputProps {
-  placeholder?: string;
+  [key: string]: any;
 }
 
-const MyInput: React.FC<MyInputProps> = ({ placeholder }) => {
-  return <Input placeholder={placeholder} />;
+const MyInput: React.FC<MyInputProps> = (props) => {
+  return <Input {...props} />;
 };
 
 export default MyInput;

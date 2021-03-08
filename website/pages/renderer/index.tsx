@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, cloneElement } from 'react';
 import renderer from '@axe/renderer';
 import styled from 'styled-components';
 import { Button } from 'antd';
@@ -57,7 +57,19 @@ const Page = () => {
   };
 
   useEffect(() => {
-    renderer.mount('#renderer', pageSchema);
+    renderer.mount('#renderer', {
+      schema: pageSchema,
+      processor: (node, element) => {
+        if (node.name === 'Form' && element != null) {
+          return cloneElement(element, {
+            onValuesChange: (changedValues: any, allValues: any) => {
+              console.log(changedValues, allValues);
+            },
+          });
+        }
+        return element;
+      },
+    });
   }, [pageSchema]);
 
   return (
@@ -75,7 +87,7 @@ const Page = () => {
         onOk={handleEditOk}
       />
       {/* 渲染引擎挂载节点 */}
-      <div id="renderer"></div>
+      <div id="renderer" style={{ padding: 20, backgroundColor: '#eee' }}></div>
     </Wrapper>
   );
 };
