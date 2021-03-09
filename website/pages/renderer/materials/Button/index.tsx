@@ -1,18 +1,12 @@
 import React from 'react';
 import { Button } from 'antd';
-import type { ButtonProps } from 'antd/lib/button';
 
 export interface MyButtonProps {
-  type?: ButtonProps['type'];
-  children: string;
+  [key: string]: any;
 }
 
-const MyButton: React.FC<MyButtonProps> = ({ type, children }) => {
-  return (
-    <Button type={type} block>
-      {children}
-    </Button>
-  );
+const MyButton: React.FC<MyButtonProps> = ({ block = true, ...restProps }) => {
+  return <Button block={block} {...restProps} />;
 };
 
 export default MyButton;

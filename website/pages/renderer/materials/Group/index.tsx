@@ -2,17 +2,11 @@ import React from 'react';
 import { Card } from 'antd';
 
 export interface MyGroupProps {
-  title: string;
-  style?: React.CSSProperties;
-  children?: React.ReactNode;
+  [key: string]: any;
 }
 
-const MyGroup: React.FC<MyGroupProps> = ({ title, children, ...restProps }) => {
-  return (
-    <Card title={title} {...restProps}>
-      {children}
-    </Card>
-  );
+const MyGroup: React.FC<MyGroupProps> = (props) => {
+  return <Card {...props} />;
 };
 
 export default MyGroup;

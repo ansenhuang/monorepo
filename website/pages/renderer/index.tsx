@@ -1,4 +1,4 @@
-import React, { useEffect, useState, cloneElement, useMemo } from 'react';
+import React, { useEffect, useState, cloneElement } from 'react';
 import renderer from '@axe/renderer';
 import styled from 'styled-components';
 import { Button } from 'antd';
@@ -50,8 +50,6 @@ const Page = () => {
   const [pageSchema, setPageSchema] = useState(initialPageSchema);
   const [editVisible, setEditVisible] = useState(false);
 
-  const formValues = useMemo(() => new Map<string, any>(), []);
-
   const handleEditOk = (nextPageSchema: PageSchema) => {
     pageSchemaStore.set(nextPageSchema);
     setPageSchema(nextPageSchema);
@@ -62,17 +60,17 @@ const Page = () => {
   useEffect(() => {
     renderer.mount('#renderer', {
       schema: pageSchema,
-      processor: (node, element) => {
-        const {
-          type,
-          props: { name },
-        } = node;
-        if (type === 'form' && element != null) {
+      processor: (element, node, { updater }) => {
+        if (node.name === 'Form' && element != null) {
           return cloneElement(element, {
-            value: formValues.get(name),
-            onChange: (value: any) => {
-              console.log(name, value);
-              formValues.set(name, value);
+            onValuesChange: (changedValues: any, values: any) => {
+              console.log('onValuesChange', changedValues);
+            },
+            onFinish: (values: any) => {
+              console.log('onFinish', values);
+            },
+            onFinishFailed: (errors: any) => {
+              console.log('onFinishFailed', errors);
             },
           });
         }
