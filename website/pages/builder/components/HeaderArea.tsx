@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Input, notification } from 'antd';
 import { EyeOutlined, SaveOutlined } from '@ant-design/icons';
 import { useAtomState } from '@axe/context';
-import { pageDataAtomState } from '../atoms';
-import { setPageData } from '../helpers';
+import { pageSchemaState } from '../atoms';
+import { setPageSchema } from '../helpers';
 
 const Header = styled.div`
   height: 100%;
@@ -50,18 +50,18 @@ const RightBox = styled.div`
   }
 `;
 
-export interface HeaderAreaProps {}
+interface HeaderAreaProps {}
 
 const HeaderArea: React.FC<HeaderAreaProps> = () => {
-  const [pageData] = useAtomState(pageDataAtomState);
+  const [pageSchema] = useAtomState(pageSchemaState);
 
   const handleSave = () => {
-    setPageData(pageData);
-    const showValue = JSON.stringify(pageData, null, 2);
+    setPageSchema(pageSchema);
+    const showSchema = JSON.stringify(pageSchema, null, 2);
     notification.success({
       duration: 10,
       message: '页面数据',
-      description: <Input.TextArea readOnly rows={20} value={showValue} />,
+      description: <Input.TextArea readOnly rows={20} value={showSchema} />,
     });
   };
 

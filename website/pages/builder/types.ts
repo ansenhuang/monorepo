@@ -1,19 +1,33 @@
 import React from 'react';
 
-export interface DragSourceItem {
-  key: string;
+export interface MaterialSchema {
   name: string;
   label: string;
   Component: React.ComponentType<any> | null;
-  props: any;
-  children?: DragSourceItem[];
+  defaultProps: Record<string, any>;
+  isContainer?: boolean;
 }
 
-export interface DropDataItem extends DragSourceItem {
-  children?: DropDataItem[];
+export interface NodeSchema {
+  key: string;
+  name: MaterialSchema['name'];
+  label: MaterialSchema['label'];
+  Component: MaterialSchema['Component'];
+  props: Record<string, any>;
+  children?: NodeSchema[];
 }
 
-export interface PageData {
-  root: true;
-  children: DropDataItem[];
+export interface StoreNodeSchema extends Omit<NodeSchema, 'Component' | 'children'> {
+  children?: StoreNodeSchema[];
+}
+
+export interface PageSchema {
+  key: string;
+  name: MaterialSchema['name'];
+  label: MaterialSchema['label'];
+  children: NodeSchema[];
+}
+
+export interface StorePageSchema extends Omit<PageSchema, 'children'> {
+  children: StoreNodeSchema[];
 }

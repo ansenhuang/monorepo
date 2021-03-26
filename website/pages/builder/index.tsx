@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import HeaderArea from './components/HeaderArea';
-import DragArea from './components/DragArea';
-import DropArea from './components/DropArea';
-import AttrArea from './components/AttrArea';
+import MaterialArea from './components/MaterialArea';
+import SortableArea from './components/SortableArea';
 
 const LayoutHeader = styled(Layout.Header)`
   padding: 0;
@@ -13,7 +12,7 @@ const LayoutHeader = styled(Layout.Header)`
   border-bottom: 1px solid rgba(31, 56, 88, 0.1);
 `;
 
-const Page = () => {
+const Builder: React.FC = () => {
   return (
     <Layout style={{ height: '100vh', overflow: 'hidden' }}>
       <LayoutHeader>
@@ -21,17 +20,17 @@ const Page = () => {
       </LayoutHeader>
       <Layout>
         <Layout.Sider width={200} theme="light">
-          <DragArea />
+          <MaterialArea />
         </Layout.Sider>
         <Layout.Content style={{ overflow: 'auto' }}>
-          <DropArea />
+          <SortableArea />
         </Layout.Content>
         <Layout.Sider width={280} theme="light">
-          <AttrArea />
+          attr
         </Layout.Sider>
       </Layout>
     </Layout>
   );
 };
 
-export default Page;
+export default Builder;

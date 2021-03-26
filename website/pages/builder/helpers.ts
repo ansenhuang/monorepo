@@ -1,63 +1,77 @@
-import dragSource from './dragsource';
-import type { DropDataItem, PageData } from './types';
+import type { PageSchema, StorePageSchema, NodeSchema, MaterialSchema } from './types';
 
-const SCHEMA_KEY = '@@__SCHEMA__@@';
+const PAGE_SCHEMA = '@__PAGE_SCHEMA__@';
 
-export const getPageData = (): PageData => {
-  const value = window.localStorage.getItem(SCHEMA_KEY);
+const normalizePageSchema = (schema: StorePageSchema, materials: MaterialSchema[]): PageSchema => {
+  const recursion = (children: StorePageSchema['children']): PageSchema['children'] => {
+    return children.map((child) => ({
+      ...child,
+      Component: materials.find((material) => material.name === child.name)?.Component || null,
+      children: child.children ? recursion(child.children) : undefined,
+    }));
+  };
+
+  return {
+    ...schema,
+    children: recursion(schema.children),
+  };
+};
+
+export const getPageSchema = (materials: MaterialSchema[]): PageSchema => {
+  const value = window.localStorage.getItem(PAGE_SCHEMA);
   if (value) {
     try {
-      return JSON.parse(value);
+      return normalizePageSchema(JSON.parse(value), materials);
     } catch (error) {}
   }
   return {
-    root: true,
+    key: 'Page_' + Date.now(),
+    name: 'Page',
+    label: '页面',
     children: [],
   };
 };
 
-export const setPageData = (data: PageData) => {
-  const value = JSON.stringify(data);
-  window.localStorage.setItem(SCHEMA_KEY, value);
+export const setPageSchema = (schema: PageSchema) => {
+  const value = JSON.stringify(schema);
+  window.localStorage.setItem(PAGE_SCHEMA, value);
 };
 
-export const isPageData = (data: any): data is PageData => {
-  if (data && typeof data === 'object' && data.root && Array.isArray(data.children)) {
-    return true;
-  }
-  return false;
-};
-
-export const normalizedPageData = (pageData: PageData): PageData => {
-  const getChildren = (children: DropDataItem[]): DropDataItem[] => {
-    return children.map((child) => ({
-      ...child,
-      Component: dragSource.find((dragItem) => dragItem.name === child.name)?.Component || null,
-      children: child.children ? getChildren(child.children) : undefined,
-    }));
-  };
-  return {
-    ...pageData,
-    children: getChildren(pageData.children),
-  };
-};
-
-export const getParentFromPageData = (item: DropDataItem, pageData: PageData) => {
-  const getParent = (
-    children: DropDataItem[],
-    parent: PageData | DropDataItem,
-  ): PageData | DropDataItem | null => {
+export const getParentNode = (node: NodeSchema, schema: PageSchema) => {
+  const recursion = (
+    children: NodeSchema[],
+    parentNode: PageSchema | NodeSchema,
+  ): PageSchema | NodeSchema | null => {
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      if (child.key === item.key) {
-        return parent;
+      if (child.key === node.key) {
+        return parentNode;
       }
       if (child.children) {
-        return getParent(child.children, child);
+        return recursion(child.children, child);
       }
     }
     return null;
   };
 
-  return getParent(pageData.children, pageData);
+  return recursion(schema.children, schema);
+};
+
+export const isPageSchema = (schema: any): schema is PageSchema => {
+  if (schema && typeof schema.props === 'undefined' && typeof schema.Component === 'undefined') {
+    return true;
+  }
+  return false;
+};
+
+export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
+  const { name, label, Component, defaultProps, isContainer } = material;
+  return {
+    key: name + '_' + Date.now(),
+    name,
+    label,
+    Component,
+    props: { ...defaultProps },
+    children: isContainer ? [] : undefined,
+  };
 };

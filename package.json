@@ -36,6 +36,7 @@
     "@types/react-is": "^16.7.0",
     "@types/styled-components": "^5.0.0",
     "antd": "^4.10.0",
+    "immer": "^9.0.1",
     "inversify": "^5.0.5",
     "lodash": "^4.17.20",
     "react": "^17.0.1",

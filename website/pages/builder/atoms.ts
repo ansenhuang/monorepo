@@ -1,8 +1,8 @@
 import { setAtomState } from '@axe/context';
-import dragSource from './dragsource';
-import { getPageData, normalizedPageData } from './helpers';
-import type { DropDataItem } from './types';
+import materials from './materials';
+import { getPageSchema } from './helpers';
+import type { NodeSchema } from './types';
 
-export const dragSourceAtomState = setAtomState(dragSource);
-export const pageDataAtomState = setAtomState(normalizedPageData(getPageData()));
-export const selectedDropItemAtomState = setAtomState<DropDataItem | null>(null);
+export const materialsState = setAtomState(materials);
+export const pageSchemaState = setAtomState(getPageSchema(materials));
+export const selectedNodeState = setAtomState<NodeSchema | null>(null);
