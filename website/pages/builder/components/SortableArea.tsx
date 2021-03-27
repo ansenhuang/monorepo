@@ -77,8 +77,10 @@ export interface SortableAreaProps {}
 
 const SortableArea: React.FC<SortableAreaProps> = () => {
   const [pageSchema, setPageSchema] = useAtomState(pageSchemaState);
-  const [selectedNode, setSelectedNode] = useAtomState(selectedNodeState);
+  const [selectedNodeStore, setSelectedNode] = useAtomState(selectedNodeState);
   const [hoverNode, setHoverNode] = useState<NodeSchema | null>(null);
+
+  const selectedNode = selectedNodeStore?.node;
 
   const updatePageSchema = (handler: (draft: PageSchema) => void) => {
     const nextPageSchema = produce(pageSchema, handler);
@@ -96,8 +98,8 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
     });
   };
 
-  const handleItemClick = (item: NodeSchema) => {
-    setSelectedNode(item);
+  const handleItemClick = (item: NodeSchema, paths: string[]) => {
+    setSelectedNode({ node: item, paths });
   };
   const handleItemOver = (item: NodeSchema) => {
     if (item.key !== hoverNode?.key) {
@@ -119,6 +121,7 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
         console.warn('节点路径错误，无法更新目标节点', paths);
       }
     });
+    setSelectedNode(null);
   };
   const handleItemCopy = (paths: string[]) => {
     updatePageSchema((draftSchema) => {
@@ -165,7 +168,7 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
             key={item.key}
             hover={item.key === hoverNode?.key}
             selected={item.key === selectedNode?.key}
-            onClickCapture={() => handleItemClick(item)}
+            onClickCapture={() => handleItemClick(item, [...currentPaths, String(index)])}
             onMouseOverCapture={() => handleItemOver(item)}
             onMouseOutCapture={() => handleItemOut(item)}
           >

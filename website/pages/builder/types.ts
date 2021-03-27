@@ -1,11 +1,12 @@
 import React from 'react';
+import type { AxeFormItemConfig } from '@axe/form';
 
 export interface MaterialSchema {
   name: string;
   label: string;
   type: 'component' | 'builder';
   Component: React.ComponentType<any> | null;
-  props: Record<string, any>;
+  propsSchema: Record<string, Omit<AxeFormItemConfig, 'name'>>;
   children?: MaterialSchema[];
 }
 

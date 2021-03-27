@@ -5,4 +5,4 @@ import type { NodeSchema } from './types';
 
 export const materialsState = setAtomState(materials);
 export const pageSchemaState = setAtomState(getPageSchema(materials));
-export const selectedNodeState = setAtomState<NodeSchema | null>(null);
+export const selectedNodeState = setAtomState<{ node: NodeSchema; paths: string[] } | null>(null);

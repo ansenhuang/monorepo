@@ -8,8 +8,16 @@ const materials: MaterialSchema[] = [
     label: '分组',
     type: 'component',
     Component: Card,
-    props: {
-      title: '分组',
+    propsSchema: {
+      title: {
+        label: '标题',
+        initialValue: '分组',
+        rules: [{ required: true, message: '请输入标题' }],
+        formType: 'Input',
+        formProps: {
+          placeholder: '请输入标题',
+        },
+      },
     },
     children: [],
   },
@@ -18,8 +26,17 @@ const materials: MaterialSchema[] = [
     label: '栅格',
     type: 'builder',
     Component: Grid,
-    props: {
-      cols: 2,
+    propsSchema: {
+      cols: {
+        label: '列数',
+        initialValue: 2,
+        rules: [{ required: true, message: '请输入列数' }],
+        formType: 'InputNumber',
+        formProps: {
+          min: 1,
+          placeholder: '请输入列数',
+        },
+      },
     },
     children: [
       {
@@ -27,15 +44,24 @@ const materials: MaterialSchema[] = [
         label: '行',
         type: 'component',
         Component: Row,
-        props: {},
+        propsSchema: {},
         children: [
           {
             name: 'Col',
             label: '列',
             type: 'component',
             Component: Col,
-            props: {
-              span: 12,
+            propsSchema: {
+              span: {
+                label: '栅格数',
+                initialValue: 12,
+                rules: [{ required: true, message: '请输入栅格数' }],
+                formType: 'InputNumber',
+                formProps: {
+                  min: 1,
+                  placeholder: '请输入栅格数',
+                },
+              },
             },
             children: [],
           },
@@ -44,8 +70,17 @@ const materials: MaterialSchema[] = [
             label: '列',
             type: 'component',
             Component: Col,
-            props: {
-              span: 12,
+            propsSchema: {
+              span: {
+                label: '栅格数',
+                initialValue: 12,
+                rules: [{ required: true, message: '请输入栅格数' }],
+                formType: 'InputNumber',
+                formProps: {
+                  min: 1,
+                  placeholder: '请输入栅格数',
+                },
+              },
             },
             children: [],
           },
@@ -58,8 +93,16 @@ const materials: MaterialSchema[] = [
     label: '按钮',
     type: 'component',
     Component: Button,
-    props: {
-      children: '按钮',
+    propsSchema: {
+      children: {
+        label: '文字',
+        initialValue: '按钮',
+        rules: [{ required: true, message: '请输入文字' }],
+        formType: 'Input',
+        formProps: {
+          placeholder: '请输入文字',
+        },
+      },
     },
   },
   {
@@ -67,8 +110,16 @@ const materials: MaterialSchema[] = [
     label: '输入框',
     type: 'component',
     Component: Input,
-    props: {
-      placeholder: '请输入',
+    propsSchema: {
+      placeholder: {
+        label: '提示',
+        initialValue: '请输入',
+        rules: [{ required: true, message: '请输入提示' }],
+        formType: 'Input',
+        formProps: {
+          placeholder: '请输入提示',
+        },
+      },
     },
   },
 ];

@@ -4,6 +4,7 @@ import { Layout } from 'antd';
 import HeaderArea from './components/HeaderArea';
 import MaterialArea from './components/MaterialArea';
 import SortableArea from './components/SortableArea';
+import AttributeArea from './components/AttributeArea';
 
 const LayoutHeader = styled(Layout.Header)`
   padding: 0;
@@ -26,7 +27,7 @@ const Builder: React.FC = () => {
           <SortableArea />
         </Layout.Content>
         <Layout.Sider width={280} theme="light">
-          attr
+          <AttributeArea />
         </Layout.Sider>
       </Layout>
     </Layout>

@@ -1,5 +1,4 @@
 import { isValidElementType } from 'react-is';
-import { cloneDeep } from 'lodash';
 import type { PageSchema, StorePageSchema, NodeSchema, MaterialSchema } from './types';
 
 const PAGE_SCHEMA = '@__PAGE_SCHEMA__@';
@@ -52,15 +51,23 @@ export const setPageSchema = (schema: PageSchema) => {
   window.localStorage.setItem(PAGE_SCHEMA, getStringifyPageSchema(schema));
 };
 
+export const getInitialValues = (schema: MaterialSchema['propsSchema']) => {
+  const props: Record<string, any> = {};
+  Object.entries(schema).forEach(([name, value]) => {
+    props[name] = value.initialValue;
+  });
+  return props;
+};
+
 export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
-  const { name, label, type, Component, props, children } = material;
+  const { name, label, type, Component, propsSchema, children } = material;
   return {
     key: name + '_' + getUuid(),
     name,
     label,
     type,
     Component,
-    props: cloneDeep(props),
+    props: getInitialValues(propsSchema),
     children: children && children.map((child) => buildNodeSchema(child)),
   };
 };
