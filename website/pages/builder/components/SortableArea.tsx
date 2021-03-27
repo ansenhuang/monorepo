@@ -3,8 +3,11 @@ import styled from 'styled-components';
 import produce from 'immer';
 import ReactSortable from '@axe/sortable';
 import { useAtomState } from '@axe/context';
+import { Empty, Tooltip } from 'antd';
+import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
+import { cloneDeepWith } from 'lodash';
 import { pageSchemaState, selectedNodeState } from '../atoms';
-import { isPageSchema, buildNodeSchema } from '../helpers';
+import { buildNodeSchema, getTargetFromTree, getUuid } from '../helpers';
 import type { PageSchema, NodeSchema } from '../types';
 
 const SortableList = styled(ReactSortable)`
@@ -32,7 +35,7 @@ const SortableItem = styled.div<{
   hover: boolean;
   selected: boolean;
 }>`
-  margin: 10px;
+  margin: 2px;
   position: relative;
   z-index: 1;
   ${({ selected }) => (selected ? 'box-shadow: 0 0 0 2px #008cff;' : '')}
@@ -47,6 +50,28 @@ const SortableItemLayer = styled.div`
   z-index: 1;
   cursor: grab;
 `;
+const SortableItemAction = styled.div<{
+  show: boolean;
+}>`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  display: ${({ show }) => (show ? 'flex' : 'none')};
+  font-size: 14px;
+  color: #fff;
+  border-radius: 0 0 0 2px;
+  background-color: #008cff;
+
+  span {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+`;
 
 export interface SortableAreaProps {}
 
@@ -55,25 +80,20 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
   const [selectedNode, setSelectedNode] = useAtomState(selectedNodeState);
   const [hoverNode, setHoverNode] = useState<NodeSchema | null>(null);
 
+  const updatePageSchema = (handler: (draft: PageSchema) => void) => {
+    const nextPageSchema = produce(pageSchema, handler);
+    setPageSchema(nextPageSchema);
+  };
   const setItems = (newItems: NodeSchema[], paths: string[]) => {
-    const nextPageSchema = produce(pageSchema, (draftSchema) => {
-      const newPaths = [...paths];
-      const lastPath = newPaths.pop();
-      let current: any = draftSchema;
-      let key = newPaths.shift();
-      while (current && key) {
-        current = current[key];
-        key = newPaths.shift();
-      }
-      if (lastPath && newPaths.length === 0) {
-        // 找到目标节点
-        current[lastPath] = newItems;
+    updatePageSchema((draftSchema) => {
+      const target = getTargetFromTree(draftSchema, paths);
+      if (target) {
+        const { current, key } = target;
+        current[key] = newItems;
       } else {
-        // 未找到目标节点
         console.warn('节点路径错误，无法更新目标节点', paths);
       }
     });
-    setPageSchema(nextPageSchema);
   };
 
   const handleItemClick = (item: NodeSchema) => {
@@ -87,10 +107,41 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
   const handleItemOut = (item: NodeSchema) => {
     setHoverNode(null);
   };
+  const handleItemDelete = (paths: string[]) => {
+    updatePageSchema((draftSchema) => {
+      const target = getTargetFromTree(draftSchema, paths);
+      if (target) {
+        const { current, key } = target;
+        if (Array.isArray(current)) {
+          current.splice(+key, 1);
+        }
+      } else {
+        console.warn('节点路径错误，无法更新目标节点', paths);
+      }
+    });
+  };
+  const handleItemCopy = (paths: string[]) => {
+    updatePageSchema((draftSchema) => {
+      const target = getTargetFromTree(draftSchema, paths);
+      if (target) {
+        const { current, key } = target;
+        if (Array.isArray(current)) {
+          const cloneItem = cloneDeepWith(current[+key], (v, k) => {
+            if (k === 'key') {
+              return v.split('_')[0] + '_copy_' + getUuid();
+            }
+          });
+          current.splice(+key + 1, 0, cloneItem);
+        }
+      } else {
+        console.warn('节点路径错误，无法更新目标节点', paths);
+      }
+    });
+  };
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
-    const { name, children } = schema;
-    const isPage = isPageSchema(schema);
+    const { key, name, children } = schema;
+    const isPage = key === pageSchema.key;
     const currentPaths = [...paths, 'children'];
 
     if (children == null) {
@@ -118,11 +169,39 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
             onMouseOverCapture={() => handleItemOver(item)}
             onMouseOutCapture={() => handleItemOut(item)}
           >
+            {/* 遮罩层，组织原子组件事件触发 */}
             {!item.children && <SortableItemLayer />}
-            {item.Component && (
-              <item.Component
-                children={item.children && renderSortable(item, [...currentPaths, String(index)])}
-                {...item.props}
+            {/* 操作栏 */}
+            <SortableItemAction show={item.key === selectedNode?.key}>
+              <Tooltip title="复制">
+                <CopyOutlined onClick={() => handleItemCopy([...currentPaths, String(index)])} />
+              </Tooltip>
+              <Tooltip title="删除">
+                <DeleteOutlined
+                  onClick={() => handleItemDelete([...currentPaths, String(index)])}
+                />
+              </Tooltip>
+            </SortableItemAction>
+            {/* 节点渲染 */}
+            {item.Component ? (
+              item.type !== 'builder' ? (
+                <item.Component
+                  children={item.children && renderSortable(item, [...currentPaths, String(index)])}
+                  {...item.props}
+                />
+              ) : (
+                <item.Component
+                  schema={item}
+                  paths={[...currentPaths, String(index)]}
+                  updatePageSchema={updatePageSchema}
+                  renderSortable={renderSortable}
+                />
+              )
+            ) : (
+              <Empty
+                style={{ margin: 0, padding: 10 }}
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={`[${item.name}]组件不存在`}
               />
             )}
           </SortableItem>

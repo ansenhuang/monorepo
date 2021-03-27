@@ -4,7 +4,7 @@ import { Input, notification } from 'antd';
 import { EyeOutlined, SaveOutlined } from '@ant-design/icons';
 import { useAtomState } from '@axe/context';
 import { pageSchemaState } from '../atoms';
-import { setPageSchema } from '../helpers';
+import { setPageSchema, getStringifyPageSchema } from '../helpers';
 
 const Header = styled.div`
   height: 100%;
@@ -57,7 +57,7 @@ const HeaderArea: React.FC<HeaderAreaProps> = () => {
 
   const handleSave = () => {
     setPageSchema(pageSchema);
-    const showSchema = JSON.stringify(pageSchema, null, 2);
+    const showSchema = getStringifyPageSchema(pageSchema, 2);
     notification.success({
       duration: 10,
       message: '页面数据',

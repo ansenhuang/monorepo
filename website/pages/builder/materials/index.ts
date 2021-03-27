@@ -1,29 +1,73 @@
-import { Card, Input, Button } from 'antd';
+import { Card, Input, Button, Row, Col } from 'antd';
+import Grid from './Grid';
 import type { MaterialSchema } from '../types';
 
 const materials: MaterialSchema[] = [
   {
     name: 'Card',
     label: '分组',
-    isContainer: true,
+    type: 'component',
     Component: Card,
-    defaultProps: {
+    props: {
       title: '分组',
     },
+    children: [],
+  },
+  {
+    name: 'Grid',
+    label: '栅格',
+    type: 'builder',
+    Component: Grid,
+    props: {
+      cols: 2,
+    },
+    children: [
+      {
+        name: 'Row',
+        label: '行',
+        type: 'component',
+        Component: Row,
+        props: {},
+        children: [
+          {
+            name: 'Col',
+            label: '列',
+            type: 'component',
+            Component: Col,
+            props: {
+              span: 12,
+            },
+            children: [],
+          },
+          {
+            name: 'Col',
+            label: '列',
+            type: 'component',
+            Component: Col,
+            props: {
+              span: 12,
+            },
+            children: [],
+          },
+        ],
+      },
+    ],
   },
   {
     name: 'Button',
     label: '按钮',
+    type: 'component',
     Component: Button,
-    defaultProps: {
+    props: {
       children: '按钮',
     },
   },
   {
     name: 'Input',
     label: '输入框',
+    type: 'component',
     Component: Input,
-    defaultProps: {
+    props: {
       placeholder: '请输入',
     },
   },

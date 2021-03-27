@@ -1,3 +1,5 @@
+import { isValidElementType } from 'react-is';
+import { cloneDeep } from 'lodash';
 import type { PageSchema, StorePageSchema, NodeSchema, MaterialSchema } from './types';
 
 const PAGE_SCHEMA = '@__PAGE_SCHEMA__@';
@@ -25,53 +27,67 @@ export const getPageSchema = (materials: MaterialSchema[]): PageSchema => {
     } catch (error) {}
   }
   return {
-    key: 'Page_' + Date.now(),
+    key: 'Page_' + getUuid(),
     name: 'Page',
     label: '页面',
+    type: 'root',
     children: [],
   };
 };
 
+export const getStringifyPageSchema = (schema: PageSchema, space?: number) => {
+  return JSON.stringify(
+    schema,
+    (k, v) => {
+      if (k === 'Component' && isValidElementType(v)) {
+        return undefined;
+      }
+      return v;
+    },
+    space,
+  );
+};
+
 export const setPageSchema = (schema: PageSchema) => {
-  const value = JSON.stringify(schema);
-  window.localStorage.setItem(PAGE_SCHEMA, value);
-};
-
-export const getParentNode = (node: NodeSchema, schema: PageSchema) => {
-  const recursion = (
-    children: NodeSchema[],
-    parentNode: PageSchema | NodeSchema,
-  ): PageSchema | NodeSchema | null => {
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      if (child.key === node.key) {
-        return parentNode;
-      }
-      if (child.children) {
-        return recursion(child.children, child);
-      }
-    }
-    return null;
-  };
-
-  return recursion(schema.children, schema);
-};
-
-export const isPageSchema = (schema: any): schema is PageSchema => {
-  if (schema && typeof schema.props === 'undefined' && typeof schema.Component === 'undefined') {
-    return true;
-  }
-  return false;
+  window.localStorage.setItem(PAGE_SCHEMA, getStringifyPageSchema(schema));
 };
 
 export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
-  const { name, label, Component, defaultProps, isContainer } = material;
+  const { name, label, type, Component, props, children } = material;
   return {
-    key: name + '_' + Date.now(),
+    key: name + '_' + getUuid(),
     name,
     label,
+    type,
     Component,
-    props: { ...defaultProps },
-    children: isContainer ? [] : undefined,
+    props: cloneDeep(props),
+    children: children && children.map((child) => buildNodeSchema(child)),
   };
+};
+
+export const getTargetFromTree = (data: any, paths: string[]) => {
+  const newPaths = [...paths];
+  const lastPath = newPaths.pop();
+  let current: any = data;
+  let key = newPaths.shift();
+  while (current && key) {
+    current = current[key];
+    key = newPaths.shift();
+  }
+  if (lastPath && newPaths.length === 0) {
+    // 找到目标节点
+    return { current, key: lastPath };
+  }
+
+  // 未找到目标节点
+  return null;
+};
+
+export const getUuid = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    /* eslint-disable no-mixed-operators */
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 };

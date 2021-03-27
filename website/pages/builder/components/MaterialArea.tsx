@@ -9,7 +9,7 @@ const SortableList = styled(ReactSortable)`
   overflow: auto;
 `;
 const SortableItem = styled.div`
-  margin: 10px;
+  margin: 2px;
   line-height: 2;
   text-align: center;
   color: #008cff;
