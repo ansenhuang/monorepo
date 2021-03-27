@@ -1,4 +1,4 @@
-import { Card, Input, Button, Row, Col } from 'antd';
+import { Card, Input, Button } from 'antd';
 import Grid from './Grid';
 import type { MaterialSchema } from '../types';
 
@@ -38,72 +38,6 @@ const materials: MaterialSchema[] = [
         },
       },
     },
-    children: [
-      {
-        name: 'Row',
-        label: '行',
-        type: 'component',
-        Component: Row,
-        propsSchema: {},
-        children: [
-          {
-            name: 'Col',
-            label: '列',
-            type: 'component',
-            Component: Col,
-            propsSchema: {
-              span: {
-                label: '栅格数',
-                initialValue: 12,
-                rules: [{ required: true, message: '请输入栅格数' }],
-                formType: 'InputNumber',
-                formProps: {
-                  min: 1,
-                  placeholder: '请输入栅格数',
-                },
-              },
-            },
-            children: [],
-          },
-          {
-            name: 'Col',
-            label: '列',
-            type: 'component',
-            Component: Col,
-            propsSchema: {
-              span: {
-                label: '栅格数',
-                initialValue: 12,
-                rules: [{ required: true, message: '请输入栅格数' }],
-                formType: 'InputNumber',
-                formProps: {
-                  min: 1,
-                  placeholder: '请输入栅格数',
-                },
-              },
-            },
-            children: [],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: 'Button',
-    label: '按钮',
-    type: 'component',
-    Component: Button,
-    propsSchema: {
-      children: {
-        label: '文字',
-        initialValue: '按钮',
-        rules: [{ required: true, message: '请输入文字' }],
-        formType: 'Input',
-        formProps: {
-          placeholder: '请输入文字',
-        },
-      },
-    },
   },
   {
     name: 'Input',
@@ -118,6 +52,23 @@ const materials: MaterialSchema[] = [
         formType: 'Input',
         formProps: {
           placeholder: '请输入提示',
+        },
+      },
+    },
+  },
+  {
+    name: 'Button',
+    label: '按钮',
+    type: 'component',
+    Component: Button,
+    propsSchema: {
+      children: {
+        label: '文字',
+        initialValue: '按钮',
+        rules: [{ required: true, message: '请输入文字' }],
+        formType: 'Input',
+        formProps: {
+          placeholder: '请输入文字',
         },
       },
     },

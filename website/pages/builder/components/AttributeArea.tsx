@@ -51,7 +51,8 @@ const AttributeArea: React.FC<AttributeAreaProps> = () => {
   const { propsSchema = {} } =
     materials.find((material) => material.name === selectedNode.name) || {};
   const formSchemaItems = Object.entries(propsSchema).map(([name, value]) => {
-    return { name, ...value };
+    // form顶层已写入当前值，这里将默认值置为空
+    return { ...value, name, initialValue: undefined };
   });
 
   const handleValuesChange = (changedValues: any, allValues: any) => {
@@ -71,7 +72,12 @@ const AttributeArea: React.FC<AttributeAreaProps> = () => {
     <Wrapper>
       <Title>{selectedNode.label}</Title>
       <Content>
-        <Form key={selectedNode.key} items={formSchemaItems} onValuesChange={handleValuesChange} />
+        <Form
+          key={selectedNode.key}
+          items={formSchemaItems}
+          initialValues={selectedNode.props}
+          onValuesChange={handleValuesChange}
+        />
       </Content>
     </Wrapper>
   );

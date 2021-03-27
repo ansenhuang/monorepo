@@ -1,5 +1,10 @@
-import { isValidElementType } from 'react-is';
-import type { PageSchema, StorePageSchema, NodeSchema, MaterialSchema } from './types';
+import type {
+  PageSchema,
+  StorePageSchema,
+  CoreNodeSchema,
+  NodeSchema,
+  MaterialSchema,
+} from './types';
 
 const PAGE_SCHEMA = '@__PAGE_SCHEMA__@';
 
@@ -38,7 +43,7 @@ export const getStringifyPageSchema = (schema: PageSchema, space?: number) => {
   return JSON.stringify(
     schema,
     (k, v) => {
-      if (k === 'Component' && isValidElementType(v)) {
+      if (k === 'Component') {
         return undefined;
       }
       return v;
@@ -59,16 +64,40 @@ export const getInitialValues = (schema: MaterialSchema['propsSchema']) => {
   return props;
 };
 
+export const normalizeNodeScheme = (schema: CoreNodeSchema): NodeSchema => {
+  const { name, children } = schema;
+
+  return {
+    ...schema,
+    key: name + '_' + getUuid(),
+    type: 'component',
+    Component: null,
+    children: children && children.map((child) => normalizeNodeScheme(child)),
+  };
+};
+
 export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
   const { name, label, type, Component, propsSchema, children } = material;
+  const props = getInitialValues(propsSchema);
+  let currentChildren = children;
+
+  if (type === 'builder') {
+    const getChildren = (Component as any).__getInitialNodeSchema;
+    if (typeof getChildren === 'function') {
+      currentChildren = getChildren(material, props);
+    }
+  }
+
   return {
     key: name + '_' + getUuid(),
     name,
     label,
     type,
     Component,
-    props: getInitialValues(propsSchema),
-    children: children && children.map((child) => buildNodeSchema(child)),
+    props,
+    children: Array.isArray(currentChildren)
+      ? currentChildren.map((child) => normalizeNodeScheme(child))
+      : currentChildren && normalizeNodeScheme(currentChildren),
   };
 };
 
@@ -91,7 +120,8 @@ export const getTargetFromTree = (data: any, paths: string[]) => {
 };
 
 export const getUuid = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  // 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+  return '4xxx-yxxx'.replace(/[xy]/g, (c) => {
     /* eslint-disable no-mixed-operators */
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;

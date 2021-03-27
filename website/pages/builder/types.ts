@@ -7,7 +7,7 @@ export interface MaterialSchema {
   type: 'component' | 'builder';
   Component: React.ComponentType<any> | null;
   propsSchema: Record<string, Omit<AxeFormItemConfig, 'name'>>;
-  children?: MaterialSchema[];
+  children?: CoreNodeSchema | CoreNodeSchema[];
 }
 
 export interface NodeSchema {
@@ -17,11 +17,16 @@ export interface NodeSchema {
   type: MaterialSchema['type'];
   Component: MaterialSchema['Component'];
   props: Record<string, any>;
-  children?: NodeSchema[];
+  children?: NodeSchema | NodeSchema[];
 }
 
 export interface StoreNodeSchema extends Omit<NodeSchema, 'Component' | 'children'> {
   children?: StoreNodeSchema[];
+}
+
+export interface CoreNodeSchema
+  extends Omit<NodeSchema, 'key' | 'type' | 'Component' | 'children'> {
+  children?: CoreNodeSchema[];
 }
 
 export interface PageSchema {
@@ -41,4 +46,8 @@ export interface BuilderComponentProps {
   paths: string[];
   updatePageSchema: (draftPageSchema: PageSchema) => void;
   renderSortable: (schema: NodeSchema, currentPaths: string[]) => JSX.Element | null;
+}
+
+export interface BuilderComponent extends React.FC<BuilderComponentProps> {
+  __getInitialNodeSchema: (material: MaterialSchema, props: Record<string, any>) => CoreNodeSchema;
 }
