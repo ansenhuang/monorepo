@@ -144,12 +144,14 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
     const { key, name, children } = schema;
-    const isPage = key === pageSchema.key;
-    const currentPaths = [...paths, 'children'];
 
     if (children == null) {
       return null;
     }
+
+    const isPage = key === pageSchema.key;
+    const currentPaths = [...paths, 'children'];
+    const childrenArray = Array.isArray(children) ? children : [children];
 
     return (
       <SortableList
@@ -159,11 +161,11 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
         }}
         animation={150}
         style={{ minHeight: isPage ? '100%' : '' }}
-        items={children}
+        items={childrenArray}
         setItems={(newItems: any[]) => setItems(newItems, currentPaths)}
         cloneItem={(item: any) => buildNodeSchema(item)}
       >
-        {children.map((item, index) => (
+        {childrenArray.map((item, index) => (
           <SortableItem
             key={item.key}
             hover={item.key === hoverNode?.key}

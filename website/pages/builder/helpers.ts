@@ -1,25 +1,29 @@
+import produce from 'immer';
 import type {
   PageSchema,
   StorePageSchema,
   CoreNodeSchema,
   NodeSchema,
   MaterialSchema,
+  StoreNodeSchema,
 } from './types';
 
 const PAGE_SCHEMA = '@__PAGE_SCHEMA__@';
 
 const normalizePageSchema = (schema: StorePageSchema, materials: MaterialSchema[]): PageSchema => {
-  const recursion = (children: StorePageSchema['children']): PageSchema['children'] => {
-    return children.map((child) => ({
-      ...child,
-      Component: materials.find((material) => material.name === child.name)?.Component || null,
-      children: child.children ? recursion(child.children) : undefined,
-    }));
+  const loop = (node: StoreNodeSchema): NodeSchema => {
+    return {
+      ...node,
+      Component: materials.find((material) => material.name === node.name)?.Component || null,
+      children: Array.isArray(node.children)
+        ? node.children.map((child) => loop(child))
+        : node.children && loop(node.children),
+    };
   };
 
   return {
     ...schema,
-    children: recursion(schema.children),
+    children: schema.children.map((child) => loop(child)),
   };
 };
 
@@ -39,21 +43,33 @@ export const getPageSchema = (materials: MaterialSchema[]): PageSchema => {
   };
 };
 
-export const getStringifyPageSchema = (schema: PageSchema, space?: number) => {
-  return JSON.stringify(
-    schema,
-    (k, v) => {
-      if (k === 'Component') {
-        return undefined;
+export const getStorePageSchema = (schema: PageSchema): StorePageSchema => {
+  return produce(schema, (draftSchema) => {
+    const loop = (node: NodeSchema) => {
+      const { Component, children } = node;
+      let currentChildren = children;
+
+      // 删除不需要的节点
+      (node as any).Component = undefined;
+
+      const setChildren = (Component as any)?.__setFinalNodeSchema;
+      if (typeof setChildren === 'function') {
+        currentChildren = setChildren(node);
       }
-      return v;
-    },
-    space,
-  );
+
+      // 递归
+      if (Array.isArray(currentChildren)) {
+        currentChildren.map((child) => loop(child));
+      } else if (currentChildren) {
+        loop(currentChildren);
+      }
+    };
+    draftSchema.children.map((child) => loop(child));
+  }) as StorePageSchema;
 };
 
 export const setPageSchema = (schema: PageSchema) => {
-  window.localStorage.setItem(PAGE_SCHEMA, getStringifyPageSchema(schema));
+  window.localStorage.setItem(PAGE_SCHEMA, JSON.stringify(getStorePageSchema(schema)));
 };
 
 export const getInitialValues = (schema: MaterialSchema['propsSchema']) => {
@@ -72,7 +88,9 @@ export const normalizeNodeScheme = (schema: CoreNodeSchema): NodeSchema => {
     key: name + '_' + getUuid(),
     type: 'component',
     Component: null,
-    children: children && children.map((child) => normalizeNodeScheme(child)),
+    children: Array.isArray(children)
+      ? children.map((child) => normalizeNodeScheme(child))
+      : children && normalizeNodeScheme(children),
   };
 };
 
@@ -81,11 +99,9 @@ export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
   const props = getInitialValues(propsSchema);
   let currentChildren = children;
 
-  if (type === 'builder') {
-    const getChildren = (Component as any).__getInitialNodeSchema;
-    if (typeof getChildren === 'function') {
-      currentChildren = getChildren(material, props);
-    }
+  const getChildren = (Component as any)?.__getInitialNodeSchema;
+  if (typeof getChildren === 'function') {
+    currentChildren = getChildren(material, props);
   }
 
   return {

@@ -21,12 +21,12 @@ export interface NodeSchema {
 }
 
 export interface StoreNodeSchema extends Omit<NodeSchema, 'Component' | 'children'> {
-  children?: StoreNodeSchema[];
+  children?: StoreNodeSchema | StoreNodeSchema[];
 }
 
 export interface CoreNodeSchema
   extends Omit<NodeSchema, 'key' | 'type' | 'Component' | 'children'> {
-  children?: CoreNodeSchema[];
+  children?: CoreNodeSchema | CoreNodeSchema[];
 }
 
 export interface PageSchema {
@@ -44,10 +44,11 @@ export interface StorePageSchema extends Omit<PageSchema, 'children'> {
 export interface BuilderComponentProps {
   schema: NodeSchema;
   paths: string[];
-  updatePageSchema: (draftPageSchema: PageSchema) => void;
+  updatePageSchema: (handler: (draftPageSchema: PageSchema) => void) => void;
   renderSortable: (schema: NodeSchema, currentPaths: string[]) => JSX.Element | null;
 }
 
 export interface BuilderComponent extends React.FC<BuilderComponentProps> {
-  __getInitialNodeSchema: (material: MaterialSchema, props: Record<string, any>) => CoreNodeSchema;
+  __getInitialNodeSchema?: (material: MaterialSchema, props: Record<string, any>) => CoreNodeSchema;
+  __setFinalNodeSchema?: (node: NodeSchema) => NodeSchema;
 }

@@ -11,6 +11,7 @@ const materials: MaterialSchema[] = [
     propsSchema: {
       title: {
         label: '标题',
+        labelCol: { span: 6 },
         initialValue: '分组',
         rules: [{ required: true, message: '请输入标题' }],
         formType: 'Input',
@@ -29,11 +30,15 @@ const materials: MaterialSchema[] = [
     propsSchema: {
       cols: {
         label: '列数',
+        labelCol: { span: 6 },
         initialValue: 2,
         rules: [{ required: true, message: '请输入列数' }],
         formType: 'InputNumber',
         formProps: {
           min: 1,
+          max: 24,
+          step: 1,
+          precision: 0,
           placeholder: '请输入列数',
         },
       },
@@ -47,6 +52,7 @@ const materials: MaterialSchema[] = [
     propsSchema: {
       placeholder: {
         label: '提示',
+        labelCol: { span: 6 },
         initialValue: '请输入',
         rules: [{ required: true, message: '请输入提示' }],
         formType: 'Input',
@@ -62,8 +68,25 @@ const materials: MaterialSchema[] = [
     type: 'component',
     Component: Button,
     propsSchema: {
+      type: {
+        label: '类型',
+        labelCol: { span: 6 },
+        initialValue: 'default',
+        formType: 'Select',
+        formProps: {
+          options: [
+            { label: 'default', value: 'default' },
+            { label: 'primary', value: 'primary' },
+            { label: 'ghost', value: 'ghost' },
+            { label: 'dashed', value: 'dashed' },
+            { label: 'link', value: 'link' },
+            { label: 'text', value: 'text' },
+          ],
+        },
+      },
       children: {
         label: '文字',
+        labelCol: { span: 6 },
         initialValue: '按钮',
         rules: [{ required: true, message: '请输入文字' }],
         formType: 'Input',
