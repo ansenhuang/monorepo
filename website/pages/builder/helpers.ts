@@ -50,7 +50,9 @@ export const getStorePageSchema = (schema: PageSchema): StorePageSchema => {
       let currentChildren = children;
 
       // 删除不需要的节点
-      (node as any).Component = undefined;
+      const nodeAlias: any = node;
+      delete nodeAlias.Component;
+      delete nodeAlias.unmounted;
 
       const setChildren = (Component as any)?.__setFinalNodeSchema;
       if (typeof setChildren === 'function') {
@@ -111,6 +113,7 @@ export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
     type,
     Component,
     props,
+    unmounted: true,
     children: Array.isArray(currentChildren)
       ? currentChildren.map((child) => normalizeNodeScheme(child))
       : currentChildren && normalizeNodeScheme(currentChildren),

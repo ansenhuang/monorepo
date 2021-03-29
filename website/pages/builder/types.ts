@@ -17,6 +17,7 @@ export interface NodeSchema {
   type: MaterialSchema['type'];
   Component: MaterialSchema['Component'];
   props: Record<string, any>;
+  unmounted?: boolean;
   children?: NodeSchema | NodeSchema[];
 }
 

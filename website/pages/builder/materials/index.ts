@@ -42,6 +42,21 @@ const materials: MaterialSchema[] = [
           placeholder: '请输入列数',
         },
       },
+      justify: {
+        label: '水平排列',
+        labelCol: { span: 6 },
+        initialValue: 'start',
+        formType: 'Select',
+        formProps: {
+          options: [
+            { label: 'start', value: 'start' },
+            { label: 'center', value: 'center' },
+            { label: 'end', value: 'end' },
+            { label: 'space-around', value: 'space-around' },
+            { label: 'space-between', value: 'space-between' },
+          ],
+        },
+      },
     },
   },
   {
@@ -83,6 +98,14 @@ const materials: MaterialSchema[] = [
             { label: 'text', value: 'text' },
           ],
         },
+      },
+      block: {
+        label: '块级',
+        labelCol: { span: 6 },
+        initialValue: false,
+        formType: 'Switch',
+        valuePropName: 'checked',
+        formProps: {},
       },
       children: {
         label: '文字',

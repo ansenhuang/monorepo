@@ -87,15 +87,33 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
     setPageSchema(nextPageSchema);
   };
   const setItems = (newItems: NodeSchema[], paths: string[]) => {
+    let nextSelectedNodeStore;
+    const nextItems = newItems.map((item, index) => {
+      // 新增的节点
+      if (item.unmounted) {
+        nextSelectedNodeStore = { node: item, paths: [...paths, String(index)] };
+      }
+
+      return {
+        ...item,
+        unmounted: false,
+      };
+    });
+
     updatePageSchema((draftSchema) => {
       const target = getTargetFromTree(draftSchema, paths);
       if (target) {
         const { current, key } = target;
-        current[key] = newItems;
+        current[key] = nextItems;
       } else {
         console.warn('节点路径错误，无法更新目标节点', paths);
       }
     });
+
+    // 如果是新增的则选中
+    if (nextSelectedNodeStore) {
+      setSelectedNode(nextSelectedNodeStore);
+    }
   };
 
   const handleItemClick = (item: NodeSchema, paths: string[]) => {

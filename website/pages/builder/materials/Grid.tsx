@@ -3,31 +3,29 @@ import { Row, Col } from 'antd';
 import { getTargetFromTree, normalizeNodeScheme } from '../helpers';
 import type { BuilderComponent, CoreNodeSchema, NodeSchema } from '../types';
 
-const getRowNodeSchema = (): CoreNodeSchema => {
+const getRowNodeSchema = (props: Record<string, any> = {}): CoreNodeSchema => {
   return {
     name: 'Row',
     label: '行',
-    props: {},
+    props,
     children: [],
   };
 };
-const getColNodeSchema = (span: number = 12): CoreNodeSchema => {
+const getColNodeSchema = (props: Record<string, any> = {}): CoreNodeSchema => {
   return {
     name: 'Col',
     label: '列',
-    props: {
-      span,
-    },
+    props,
     children: [],
   };
 };
 
 const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortable }) => {
-  const [currentProps, setCurrentProps] = useState<Record<string, any>>({
-    cols: 2,
-  });
-
   const { props, children } = schema;
+
+  const [currentProps, setCurrentProps] = useState<Record<string, any>>(props);
+
+  const { cols, ...rowProps } = currentProps;
   const colNodes: NodeSchema[] = (children as any).children || [];
   const colPaths = [...paths, 'children', 'children'];
 
@@ -43,7 +41,7 @@ const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortabl
             if (current[key][i]) {
               current[key][i].props.span = span;
             } else {
-              current[key][i] = normalizeNodeScheme(getColNodeSchema(span));
+              current[key][i] = normalizeNodeScheme(getColNodeSchema({ span }));
             }
           }
         } else {
@@ -55,8 +53,8 @@ const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortabl
   }, [props]);
 
   return (
-    <Row>
-      {[...Array(currentProps.cols)].map((_, index) => {
+    <Row {...rowProps}>
+      {[...Array(cols)].map((_, index) => {
         const node = colNodes[index];
         return (
           <Col key={node.key} {...node.props}>
@@ -69,19 +67,21 @@ const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortabl
 };
 
 Grid.__getInitialNodeSchema = (material, props) => {
-  const span = Math.floor(24 / (props.cols || 1));
+  const { cols, ...rowProps } = props;
+  const span = Math.floor(24 / (cols || 1));
 
-  const row = getRowNodeSchema();
-  row.children = [getColNodeSchema(span), getColNodeSchema(span)];
+  const row = getRowNodeSchema(rowProps);
+  row.children = [getColNodeSchema({ span }), getColNodeSchema({ span })];
 
   return row;
 };
 
 Grid.__setFinalNodeSchema = (node) => {
   const { props, children } = node;
+  const { cols } = props;
   const colNodes: NodeSchema[] = (children as any).children || [];
 
-  (children as any).children = colNodes.slice(0, props.cols || 1);
+  (children as any).children = colNodes.slice(0, cols || 1);
 
   return node;
 };
