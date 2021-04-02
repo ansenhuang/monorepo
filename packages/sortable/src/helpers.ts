@@ -29,7 +29,7 @@ export const domEventHandlers: Partial<Record<EventTypes, EventHandler>> = {
         from.replaceChild(item, clone);
       }
       newItems.splice(newIndex, 0, addItem);
-      setItems(newItems);
+      setItems(newItems, e);
     }
   },
   onRemove: (e, store) => {
@@ -40,7 +40,7 @@ export const domEventHandlers: Partial<Record<EventTypes, EventHandler>> = {
       newItems.splice(oldIndex, 1);
       // 还原sortablejs的dom操作，避免react diff找不到原来的dom移除
       from.insertBefore(item, from.children[oldIndex]);
-      setItems(newItems);
+      setItems(newItems, e);
     }
   },
   onUpdate: (e, store) => {
@@ -56,7 +56,7 @@ export const domEventHandlers: Partial<Record<EventTypes, EventHandler>> = {
         newItems.splice(newIndex + 1, 0, oldItem);
         newItems.splice(oldIndex, 1);
       }
-      setItems(newItems);
+      setItems(newItems, e);
     }
   },
 };

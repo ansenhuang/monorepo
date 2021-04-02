@@ -10,7 +10,7 @@ export interface MemoStore<T> {
   items: ReactSortableProps<T>['items'];
   setItems: ReactSortableProps<T>['setItems'];
   cloneItem: ReactSortableProps<T>['cloneItem'] | null;
-  eventHandlers: Partial<Record<EventTypes, (e: Sortable.SortableEvent) => void>> | null;
+  eventHandlers: Partial<Record<EventTypes, (event: Sortable.SortableEvent) => void>> | null;
 }
 
 export interface SortableStore {
@@ -23,7 +23,7 @@ export interface ReactSortableProps<T> extends Sortable.Options {
   className?: string;
   style?: React.CSSProperties;
   items: T[];
-  setItems: (newItems: T[]) => void;
+  setItems: (newItems: T[], event: Sortable.SortableEvent) => void;
   cloneItem?: (item: T) => T;
   children: React.ReactElement[];
 }
@@ -42,4 +42,4 @@ export type EventTypes =
   | 'onEnd' // 释放结束时
   | 'onFilter'; // 拖拽filtered元素时
 
-export type EventHandler = <T>(e: Sortable.SortableEvent, store: MemoStore<T>) => void;
+export type EventHandler = <T>(event: Sortable.SortableEvent, store: MemoStore<T>) => void;
