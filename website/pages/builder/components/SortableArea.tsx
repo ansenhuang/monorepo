@@ -11,9 +11,9 @@ import { buildNodeSchema, getTargetFromTree, getUuid } from '../helpers';
 import type { PageSchema, NodeSchema } from '../types';
 
 const SortableList = styled(ReactSortable)`
-  min-height: 50px;
   overflow: auto;
   position: relative;
+  ${({ items }) => (items.length === 0 ? 'min-height: 50px;' : '')};
 
   &::after {
     content: '请拖入组件';
@@ -168,8 +168,10 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
     }
 
     const isPage = key === pageSchema.key;
-    const currentPaths = [...paths, 'children'];
     const childrenArray = Array.isArray(children) ? children : [children];
+    const getItemPaths = (index: number) => {
+      return [...paths, 'children'].concat(Array.isArray(children) ? [String(index)] : []);
+    };
 
     return (
       <SortableList
@@ -180,55 +182,56 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
         animation={150}
         style={{ minHeight: isPage ? '100%' : '' }}
         items={childrenArray}
-        setItems={(newItems: any[]) => setItems(newItems, currentPaths)}
+        setItems={(newItems: any[]) => setItems(newItems, [...paths, 'children'])}
         cloneItem={(item: any) => buildNodeSchema(item)}
       >
-        {childrenArray.map((item, index) => (
-          <SortableItem
-            key={item.key}
-            hover={item.key === hoverNode?.key}
-            selected={item.key === selectedNode?.key}
-            onClickCapture={() => handleItemClick(item, [...currentPaths, String(index)])}
-            onMouseOverCapture={() => handleItemOver(item)}
-            onMouseOutCapture={() => handleItemOut(item)}
-          >
-            {/* 遮罩层，组织原子组件事件触发 */}
-            {!item.children && <SortableItemLayer />}
-            {/* 操作栏 */}
-            <SortableItemAction show={item.key === selectedNode?.key}>
-              <Tooltip title="复制">
-                <CopyOutlined onClick={() => handleItemCopy([...currentPaths, String(index)])} />
-              </Tooltip>
-              <Tooltip title="删除">
-                <DeleteOutlined
-                  onClick={() => handleItemDelete([...currentPaths, String(index)])}
-                />
-              </Tooltip>
-            </SortableItemAction>
-            {/* 节点渲染 */}
-            {item.Component ? (
-              item.type !== 'builder' ? (
-                <item.Component
-                  children={item.children && renderSortable(item, [...currentPaths, String(index)])}
-                  {...item.props}
-                />
+        {childrenArray.map((item, index) => {
+          const itemPaths = getItemPaths(index);
+          return (
+            <SortableItem
+              key={item.key}
+              hover={item.key === hoverNode?.key}
+              selected={item.key === selectedNode?.key}
+              onClickCapture={() => handleItemClick(item, itemPaths)}
+              onMouseOverCapture={() => handleItemOver(item)}
+              onMouseOutCapture={() => handleItemOut(item)}
+            >
+              {/* 遮罩层，组织原子组件事件触发 */}
+              {!item.children && <SortableItemLayer />}
+              {/* 操作栏 */}
+              <SortableItemAction show={item.key === selectedNode?.key}>
+                <Tooltip title="复制">
+                  <CopyOutlined onClick={() => handleItemCopy(itemPaths)} />
+                </Tooltip>
+                <Tooltip title="删除">
+                  <DeleteOutlined onClick={() => handleItemDelete(itemPaths)} />
+                </Tooltip>
+              </SortableItemAction>
+              {/* 节点渲染 */}
+              {item.Component ? (
+                item.type !== 'builder' ? (
+                  <item.Component
+                    children={item.children && renderSortable(item, itemPaths)}
+                    {...item.props}
+                  />
+                ) : (
+                  <item.Component
+                    schema={item}
+                    paths={itemPaths}
+                    updatePageSchema={updatePageSchema}
+                    renderSortable={renderSortable}
+                  />
+                )
               ) : (
-                <item.Component
-                  schema={item}
-                  paths={[...currentPaths, String(index)]}
-                  updatePageSchema={updatePageSchema}
-                  renderSortable={renderSortable}
+                <Empty
+                  style={{ margin: 0, padding: 10 }}
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={`[${item.name}]组件不存在`}
                 />
-              )
-            ) : (
-              <Empty
-                style={{ margin: 0, padding: 10 }}
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={`[${item.name}]组件不存在`}
-              />
-            )}
-          </SortableItem>
-        ))}
+              )}
+            </SortableItem>
+          );
+        })}
       </SortableList>
     );
   };
