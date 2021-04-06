@@ -4,7 +4,7 @@ import produce from 'immer';
 import { DownOutlined } from '@ant-design/icons';
 import ReactSortable from '@axe/sortable';
 import { useAtomState } from '@axe/context';
-import { pageSchemaState } from '../atoms';
+import { pageSchemaState, hoverNodeState, selectedNodeState } from '../atoms';
 import { getTargetFromTree, buildNodeSchema } from '../helpers';
 import type { SortableEvent } from '@axe/sortable';
 import type { PageSchema, NodeSchema } from '../types';
@@ -57,10 +57,6 @@ const Text = styled.div<{
     height: 0;
     border-bottom: 1px solid #f0f0f0;
   }
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
 `;
 
 interface MoveItemStore {
@@ -71,7 +67,12 @@ interface MoveItemStore {
 
 const OutlineTree: React.FC = () => {
   const [pageSchema, setPageSchema] = useAtomState(pageSchemaState);
+  const [selectedNodeStore] = useAtomState(selectedNodeState);
+  const [hoverNodeStore, setHoverNode] = useAtomState(hoverNodeState);
   const [closedItems, setClosedItems] = useState<string[]>([]);
+
+  const selectedNode = selectedNodeStore?.node;
+  const hoverNode = hoverNodeStore?.node;
 
   const memoStore = useMemo<{
     moveList: MoveItemStore[];
@@ -136,7 +137,7 @@ const OutlineTree: React.FC = () => {
     setPageSchema(nextPageSchema);
   };
 
-  const handleItemExpand = (node: NodeSchema) => {
+  const handleItemExpand = (node: NodeSchema, paths: string[]) => {
     const nextClosedItems = [...closedItems];
     const index = nextClosedItems.findIndex((key) => key === node.key);
     if (index === -1) {
@@ -146,6 +147,14 @@ const OutlineTree: React.FC = () => {
     }
     setClosedItems(nextClosedItems);
   };
+  const handleItemOver = (item: NodeSchema, paths: string[]) => {
+    if (item.key !== hoverNode?.key) {
+      setHoverNode({ node: item, paths });
+    }
+  };
+  const handleItemOut = (item: NodeSchema, paths: string[]) => {
+    setHoverNode(null);
+  };
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
     const { name, children } = schema;
@@ -154,19 +163,28 @@ const OutlineTree: React.FC = () => {
       return null;
     }
 
-    const renderItem = (item: NodeSchema, index?: number) => (
-      <SortableItem key={item.key} style={{ height: closedItems.includes(item.key) ? 29 : '' }}>
-        <Text
-          style={{ cursor: index == null ? 'not-allowed' : '' }}
-          closed={closedItems.includes(item.key)}
-          onClick={() => handleItemExpand(item)}
-        >
-          {item.children && <DownOutlined />}
-          {item.label} ({item.key})
-        </Text>
-        {renderSortable(item, [...paths, 'children'].concat(index != null ? [String(index)] : []))}
-      </SortableItem>
-    );
+    const renderItem = (item: NodeSchema, index?: number) => {
+      const itemPaths = [...paths, 'children'].concat(index != null ? [String(index)] : []);
+      return (
+        <SortableItem key={item.key} style={{ height: closedItems.includes(item.key) ? 29 : '' }}>
+          <Text
+            style={{
+              cursor: index == null ? 'not-allowed' : '',
+              backgroundColor:
+                hoverNode?.key === item.key || selectedNode?.key === item.key ? '#f0f0f0' : '',
+            }}
+            closed={closedItems.includes(item.key)}
+            onClick={() => handleItemExpand(item, itemPaths)}
+            onMouseOverCapture={() => handleItemOver(item, itemPaths)}
+            onMouseOutCapture={() => handleItemOut(item, itemPaths)}
+          >
+            {item.children && <DownOutlined />}
+            {item.label} ({item.key})
+          </Text>
+          {renderSortable(item, itemPaths)}
+        </SortableItem>
+      );
+    };
 
     if (!Array.isArray(children)) {
       return (

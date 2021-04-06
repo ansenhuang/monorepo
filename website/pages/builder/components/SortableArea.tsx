@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import produce from 'immer';
 import ReactSortable from '@axe/sortable';
@@ -6,7 +6,7 @@ import { useAtomState } from '@axe/context';
 import { Empty, Tooltip } from 'antd';
 import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { cloneDeepWith } from 'lodash';
-import { pageSchemaState, selectedNodeState } from '../atoms';
+import { pageSchemaState, selectedNodeState, hoverNodeState } from '../atoms';
 import { buildNodeSchema, getTargetFromTree, getUuid } from '../helpers';
 import type { PageSchema, NodeSchema } from '../types';
 
@@ -78,9 +78,10 @@ export interface SortableAreaProps {}
 const SortableArea: React.FC<SortableAreaProps> = () => {
   const [pageSchema, setPageSchema] = useAtomState(pageSchemaState);
   const [selectedNodeStore, setSelectedNode] = useAtomState(selectedNodeState);
-  const [hoverNode, setHoverNode] = useState<NodeSchema | null>(null);
+  const [hoverNodeStore, setHoverNode] = useAtomState(hoverNodeState);
 
   const selectedNode = selectedNodeStore?.node;
+  const hoverNode = hoverNodeStore?.node;
 
   const updatePageSchema = (handler: (draft: PageSchema) => void) => {
     const nextPageSchema = produce(pageSchema, handler);
@@ -119,12 +120,12 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
   const handleItemClick = (item: NodeSchema, paths: string[]) => {
     setSelectedNode({ node: item, paths });
   };
-  const handleItemOver = (item: NodeSchema) => {
+  const handleItemOver = (item: NodeSchema, paths: string[]) => {
     if (item.key !== hoverNode?.key) {
-      setHoverNode(item);
+      setHoverNode({ node: item, paths });
     }
   };
-  const handleItemOut = (item: NodeSchema) => {
+  const handleItemOut = (item: NodeSchema, paths: string[]) => {
     setHoverNode(null);
   };
   const handleItemDelete = (paths: string[]) => {
@@ -169,9 +170,6 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
 
     const isPage = key === pageSchema.key;
     const childrenArray = Array.isArray(children) ? children : [children];
-    const getItemPaths = (index: number) => {
-      return [...paths, 'children'].concat(Array.isArray(children) ? [String(index)] : []);
-    };
 
     return (
       <SortableList
@@ -186,15 +184,17 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
         cloneItem={(item: any) => buildNodeSchema(item)}
       >
         {childrenArray.map((item, index) => {
-          const itemPaths = getItemPaths(index);
+          const itemPaths = [...paths, 'children'].concat(
+            Array.isArray(children) ? [String(index)] : [],
+          );
           return (
             <SortableItem
               key={item.key}
               hover={item.key === hoverNode?.key}
               selected={item.key === selectedNode?.key}
               onClickCapture={() => handleItemClick(item, itemPaths)}
-              onMouseOverCapture={() => handleItemOver(item)}
-              onMouseOutCapture={() => handleItemOut(item)}
+              onMouseOverCapture={() => handleItemOver(item, itemPaths)}
+              onMouseOutCapture={() => handleItemOut(item, itemPaths)}
             >
               {/* 遮罩层，组织原子组件事件触发 */}
               {!item.children && <SortableItemLayer />}
