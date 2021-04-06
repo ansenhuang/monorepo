@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import produce from 'immer';
+import { DownOutlined } from '@ant-design/icons';
 import ReactSortable from '@axe/sortable';
 import { useAtomState } from '@axe/context';
 import { pageSchemaState } from '../atoms';
@@ -15,16 +16,47 @@ const SortableList = styled(ReactSortable)`
   padding-left: 20px;
 `;
 const SortableItem = styled.div`
-  /* padding-left: 20px; */
+  border-left: 1px dashed #f0f0f0;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
 `;
-const Text = styled.div`
+const Text = styled.div<{
+  closed?: boolean;
+}>`
+  padding: 0 8px;
   font-size: 12px;
   color: #666;
-  text-indent: 10px;
   line-height: 28px;
-  border-left: 1px solid #f0f0f0;
   border-bottom: 1px solid #f0f0f0;
   cursor: grab;
+  position: relative;
+
+  > span {
+    margin-right: 8px;
+    color: #999;
+    transition: transform 0.15s;
+    transform: rotate(${({ closed }) => (closed ? '-90' : '0')}deg);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
 
   &:hover {
     background-color: #f0f0f0;
@@ -39,6 +71,7 @@ interface MoveItemStore {
 
 const OutlineTree: React.FC = () => {
   const [pageSchema, setPageSchema] = useAtomState(pageSchemaState);
+  const [closedItems, setClosedItems] = useState<string[]>([]);
 
   const memoStore = useMemo<{
     moveList: MoveItemStore[];
@@ -103,6 +136,17 @@ const OutlineTree: React.FC = () => {
     setPageSchema(nextPageSchema);
   };
 
+  const handleItemExpand = (node: NodeSchema) => {
+    const nextClosedItems = [...closedItems];
+    const index = nextClosedItems.findIndex((key) => key === node.key);
+    if (index === -1) {
+      nextClosedItems.push(node.key);
+    } else {
+      nextClosedItems.splice(index, 1);
+    }
+    setClosedItems(nextClosedItems);
+  };
+
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
     const { name, children } = schema;
 
@@ -110,16 +154,24 @@ const OutlineTree: React.FC = () => {
       return null;
     }
 
+    const renderItem = (item: NodeSchema, index?: number) => (
+      <SortableItem key={item.key} style={{ height: closedItems.includes(item.key) ? 29 : '' }}>
+        <Text
+          style={{ cursor: index == null ? 'not-allowed' : '' }}
+          closed={closedItems.includes(item.key)}
+          onClick={() => handleItemExpand(item)}
+        >
+          {item.children && <DownOutlined />}
+          {item.label} ({item.key})
+        </Text>
+        {renderSortable(item, [...paths, 'children'].concat(index != null ? [String(index)] : []))}
+      </SortableItem>
+    );
+
     if (!Array.isArray(children)) {
-      const item = children;
       return (
-        <div style={{ paddingLeft: 20 }}>
-          <SortableItem key={item.key}>
-            <Text style={{ cursor: 'not-allowed' }}>
-              {item.label} ({item.key})
-            </Text>
-            {renderSortable(item, [...paths, 'children'])}
-          </SortableItem>
+        <div style={{ paddingLeft: 20 }} className={(SortableList as any).styledComponentId}>
+          {renderItem(children)}
         </div>
       );
     }
@@ -136,14 +188,7 @@ const OutlineTree: React.FC = () => {
         setItems={(newItems: any[], e) => setItems(newItems, [...paths, 'children'], e)}
         cloneItem={(item: any) => buildNodeSchema(item)}
       >
-        {children.map((item, index) => (
-          <SortableItem key={item.key}>
-            <Text>
-              {item.label} ({item.key})
-            </Text>
-            {renderSortable(item, [...paths, 'children', String(index)])}
-          </SortableItem>
-        ))}
+        {children.map((item, index) => renderItem(item, index))}
       </SortableList>
     );
   };
