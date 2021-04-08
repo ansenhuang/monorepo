@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import produce from 'immer';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, SelectOutlined } from '@ant-design/icons';
 import ReactSortable from '@axe/sortable';
 import { useAtomState } from '@axe/context';
 import { pageSchemaState, hoverNodeState, selectedNodeState } from '../atoms';
@@ -58,6 +58,10 @@ const Text = styled.div<{
     border-bottom: 1px solid #f0f0f0;
   }
 `;
+const TextRight = styled.div`
+  float: right;
+  cursor: pointer;
+`;
 
 interface MoveItemStore {
   newItems: NodeSchema[];
@@ -67,7 +71,7 @@ interface MoveItemStore {
 
 const OutlineTree: React.FC = () => {
   const [pageSchema, setPageSchema] = useAtomState(pageSchemaState);
-  const [selectedNodeStore] = useAtomState(selectedNodeState);
+  const [selectedNodeStore, setSelectedNode] = useAtomState(selectedNodeState);
   const [hoverNodeStore, setHoverNode] = useAtomState(hoverNodeState);
   const [closedItems, setClosedItems] = useState<string[]>([]);
 
@@ -136,6 +140,12 @@ const OutlineTree: React.FC = () => {
     });
     setPageSchema(nextPageSchema);
   };
+  const eventHandler = (fn: Function) => {
+    return (e: React.MouseEvent) => {
+      e.stopPropagation();
+      fn();
+    };
+  };
 
   const handleItemExpand = (node: NodeSchema, paths: string[]) => {
     const nextClosedItems = [...closedItems];
@@ -154,6 +164,9 @@ const OutlineTree: React.FC = () => {
   };
   const handleItemOut = (item: NodeSchema, paths: string[]) => {
     setHoverNode(null);
+  };
+  const handleItemSelected = (item: NodeSchema, paths: string[]) => {
+    setSelectedNode({ node: item, paths });
   };
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
@@ -202,6 +215,11 @@ const OutlineTree: React.FC = () => {
               >
                 {item.children && <DownOutlined />}
                 {item.label} ({item.key})
+                <TextRight>
+                  <SelectOutlined
+                    onClick={eventHandler(() => handleItemSelected(item, itemPaths))}
+                  />
+                </TextRight>
               </Text>
               {renderSortable(item, itemPaths)}
             </SortableItem>
