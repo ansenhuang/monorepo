@@ -6,7 +6,6 @@ const materials: MaterialSchema[] = [
   {
     name: 'Card',
     label: '分组',
-    type: 'component',
     Component: Card,
     propsSchema: {
       title: {
@@ -58,11 +57,11 @@ const materials: MaterialSchema[] = [
         },
       },
     },
+    children: [],
   },
   {
     name: 'Input',
     label: '输入框',
-    type: 'component',
     Component: Input,
     propsSchema: {
       placeholder: {
@@ -80,7 +79,6 @@ const materials: MaterialSchema[] = [
   {
     name: 'Button',
     label: '按钮',
-    type: 'component',
     Component: Button,
     propsSchema: {
       type: {

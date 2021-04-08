@@ -157,56 +157,56 @@ const OutlineTree: React.FC = () => {
   };
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
-    const { name, children } = schema;
+    const { name, children } = schema as NodeSchema;
 
     if (children == null) {
       return null;
     }
 
-    const renderItem = (item: NodeSchema, index?: number) => {
-      const itemPaths = [...paths, 'children'].concat(index != null ? [String(index)] : []);
-      return (
-        <SortableItem key={item.key} style={{ height: closedItems.includes(item.key) ? 29 : '' }}>
-          <Text
-            style={{
-              cursor: index == null ? 'not-allowed' : '',
-              backgroundColor:
-                hoverNode?.key === item.key || selectedNode?.key === item.key ? '#f0f0f0' : '',
-            }}
-            closed={closedItems.includes(item.key)}
-            onClick={() => handleItemExpand(item, itemPaths)}
-            onMouseOverCapture={() => handleItemOver(item, itemPaths)}
-            onMouseOutCapture={() => handleItemOut(item, itemPaths)}
-          >
-            {item.children && <DownOutlined />}
-            {item.label} ({item.key})
-          </Text>
-          {renderSortable(item, itemPaths)}
-        </SortableItem>
-      );
-    };
-
-    if (!Array.isArray(children)) {
-      return (
-        <div style={{ paddingLeft: 20 }} className={(SortableList as any).styledComponentId}>
-          {renderItem(children)}
-        </div>
-      );
-    }
+    const childrenArray = Array.isArray(children) ? children : [children];
 
     return (
       <SortableList
         group={{
           name: 'outline_' + name,
+          pull: true,
           put: true,
         }}
         animation={150}
         draggable={'.' + SortableItem.styledComponentId}
-        items={children}
+        items={childrenArray}
         setItems={(newItems: any[], e) => setItems(newItems, [...paths, 'children'], e)}
         cloneItem={(item: any) => buildNodeSchema(item)}
       >
-        {children.map((item, index) => renderItem(item, index))}
+        {childrenArray.map((item, index) => {
+          const itemPaths = [...paths, 'children'].concat(
+            Array.isArray(children) ? [String(index)] : [],
+          );
+
+          return (
+            <SortableItem
+              key={item.key}
+              style={{
+                height: closedItems.includes(item.key) ? 29 : '',
+              }}
+            >
+              <Text
+                style={{
+                  backgroundColor:
+                    hoverNode?.key === item.key || selectedNode?.key === item.key ? '#f0f0f0' : '',
+                }}
+                closed={closedItems.includes(item.key)}
+                onClick={() => handleItemExpand(item, itemPaths)}
+                onMouseOverCapture={() => handleItemOver(item, itemPaths)}
+                onMouseOutCapture={() => handleItemOut(item, itemPaths)}
+              >
+                {item.children && <DownOutlined />}
+                {item.label} ({item.key})
+              </Text>
+              {renderSortable(item, itemPaths)}
+            </SortableItem>
+          );
+        })}
       </SortableList>
     );
   };

@@ -30,6 +30,7 @@ const MaterialArea: React.FC<MaterialAreaProps> = () => {
       group={{
         name: 'material',
         pull: 'clone',
+        put: false,
       }}
       sort={false}
       animation={150}

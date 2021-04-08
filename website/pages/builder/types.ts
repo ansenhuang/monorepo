@@ -4,7 +4,7 @@ import type { AxeFormItemConfig } from '@axe/form';
 export interface MaterialSchema {
   name: string;
   label: string;
-  type: 'component' | 'builder';
+  type?: 'component' | 'builder';
   Component: React.ComponentType<any> | null;
   propsSchema: Record<string, Omit<AxeFormItemConfig, 'name'>>;
   children?: CoreNodeSchema | CoreNodeSchema[];
@@ -13,8 +13,9 @@ export interface MaterialSchema {
 export interface NodeSchema {
   key: string;
   name: MaterialSchema['name'];
+  builderName?: MaterialSchema['name'];
   label: MaterialSchema['label'];
-  type: MaterialSchema['type'];
+  type?: MaterialSchema['type'];
   Component: MaterialSchema['Component'];
   props: Record<string, any>;
   unmounted?: boolean;
@@ -50,6 +51,6 @@ export interface BuilderComponentProps {
 }
 
 export interface BuilderComponent extends React.FC<BuilderComponentProps> {
-  __getInitialNodeSchema?: (material: MaterialSchema, props: Record<string, any>) => CoreNodeSchema;
-  __setFinalNodeSchema?: (node: NodeSchema) => NodeSchema;
+  __getInitialNodeSchema?: (node: NodeSchema) => NodeSchema;
+  __getFinalNodeSchema?: (node: NodeSchema) => NodeSchema;
 }
