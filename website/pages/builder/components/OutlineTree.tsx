@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import produce from 'immer';
-import { DownOutlined, SelectOutlined } from '@ant-design/icons';
+import { DownOutlined, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import ReactSortable from '@axe/sortable';
 import { useAtomState } from '@axe/context';
 import { pageSchemaState, hoverNodeState, selectedNodeState } from '../atoms';
@@ -31,22 +31,17 @@ const SortableItem = styled.div`
   }
 `;
 const Text = styled.div<{
-  closed?: boolean;
+  selected: boolean;
+  hover: boolean;
 }>`
-  padding: 0 8px;
+  display: flex;
   font-size: 12px;
   color: #666;
   line-height: 28px;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: grab;
   position: relative;
-
-  > span {
-    margin-right: 8px;
-    color: #999;
-    transition: transform 0.15s;
-    transform: rotate(${({ closed }) => (closed ? '-90' : '0')}deg);
-  }
+  border-bottom: 1px solid #f0f0f0;
+  background-color: ${({ selected, hover }) =>
+    selected ? 'rgba(224, 240, 255, 1)' : hover ? '#f0f0f0' : 'inherit'};
 
   &::before {
     content: '';
@@ -58,9 +53,27 @@ const Text = styled.div<{
     border-bottom: 1px solid #f0f0f0;
   }
 `;
+const TextLeft = styled.span<{
+  closed?: boolean;
+}>`
+  color: #999;
+  transition: transform 0.15s;
+  transform: rotate(${({ closed }) => (closed ? '-90' : '0')}deg);
+
+  > span {
+    width: 28px;
+    cursor: pointer;
+  }
+`;
+const TextCenter = styled.span`
+  flex-grow: 1;
+  cursor: grab;
+`;
 const TextRight = styled.div`
-  float: right;
-  cursor: pointer;
+  > span {
+    width: 28px;
+    cursor: pointer;
+  }
 `;
 
 interface MoveItemStore {
@@ -140,12 +153,6 @@ const OutlineTree: React.FC = () => {
     });
     setPageSchema(nextPageSchema);
   };
-  const eventHandler = (fn: Function) => {
-    return (e: React.MouseEvent) => {
-      e.stopPropagation();
-      fn();
-    };
-  };
 
   const handleItemExpand = (node: NodeSchema, paths: string[]) => {
     const nextClosedItems = [...closedItems];
@@ -167,6 +174,20 @@ const OutlineTree: React.FC = () => {
   };
   const handleItemSelected = (item: NodeSchema, paths: string[]) => {
     setSelectedNode({ node: item, paths });
+  };
+  const handleItemVisible = (item: NodeSchema, paths: string[]) => {
+    const nextPageSchema = produce(pageSchema, (draftPageSchema) => {
+      const target = getTargetFromTree(draftPageSchema, paths);
+      if (target) {
+        const { current, key } = target;
+        if (current[key]) {
+          current[key].visible = item.visible === false ? true : false;
+        }
+      } else {
+        console.warn('节点路径错误，无法更新目标节点', paths);
+      }
+    });
+    setPageSchema(nextPageSchema);
   };
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
@@ -204,21 +225,27 @@ const OutlineTree: React.FC = () => {
               }}
             >
               <Text
-                style={{
-                  backgroundColor:
-                    hoverNode?.key === item.key || selectedNode?.key === item.key ? '#f0f0f0' : '',
-                }}
-                closed={closedItems.includes(item.key)}
-                onClick={() => handleItemExpand(item, itemPaths)}
+                selected={selectedNode?.key === item.key}
+                hover={hoverNode?.key === item.key}
                 onMouseOverCapture={() => handleItemOver(item, itemPaths)}
                 onMouseOutCapture={() => handleItemOut(item, itemPaths)}
               >
-                {item.children && <DownOutlined />}
-                {item.label} ({item.key})
-                <TextRight>
-                  <SelectOutlined
-                    onClick={eventHandler(() => handleItemSelected(item, itemPaths))}
-                  />
+                {item.children && (
+                  <TextLeft
+                    closed={closedItems.includes(item.key)}
+                    onClick={() => handleItemExpand(item, itemPaths)}
+                  >
+                    <DownOutlined />
+                  </TextLeft>
+                )}
+                <TextCenter
+                  style={{ paddingLeft: item.children ? 0 : 10 }}
+                  onClick={() => handleItemSelected(item, itemPaths)}
+                >
+                  {item.label} ({item.key})
+                </TextCenter>
+                <TextRight onClick={() => handleItemVisible(item, itemPaths)}>
+                  {item.visible !== false ? <EyeOutlined /> : <EyeInvisibleOutlined />}
                 </TextRight>
               </Text>
               {renderSortable(item, itemPaths)}

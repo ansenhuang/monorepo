@@ -123,10 +123,11 @@ export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
     type,
     Component,
     props,
-    unmounted: true,
     children: Array.isArray(children)
       ? children.map((child) => normalizeNodeScheme(child))
       : children && normalizeNodeScheme(children),
+    visible: true,
+    unmounted: true,
   };
 };
 

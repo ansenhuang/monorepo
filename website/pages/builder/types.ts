@@ -18,8 +18,9 @@ export interface NodeSchema {
   type?: MaterialSchema['type'];
   Component: MaterialSchema['Component'];
   props: Record<string, any>;
-  unmounted?: boolean;
   children?: NodeSchema | NodeSchema[];
+  visible: boolean;
+  unmounted?: boolean;
 }
 
 export interface StoreNodeSchema extends Omit<NodeSchema, 'Component' | 'children'> {

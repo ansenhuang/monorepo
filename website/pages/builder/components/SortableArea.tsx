@@ -209,19 +209,21 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
               </SortableItemAction>
               {/* 节点渲染 */}
               {item.Component ? (
-                item.type !== 'builder' ? (
-                  <item.Component
-                    children={item.children && renderSortable(item, itemPaths)}
-                    {...item.props}
-                  />
-                ) : (
-                  <item.Component
-                    schema={item}
-                    paths={itemPaths}
-                    updatePageSchema={updatePageSchema}
-                    renderSortable={renderSortable}
-                  />
-                )
+                item.visible !== false ? (
+                  item.type !== 'builder' ? (
+                    <item.Component
+                      children={item.children && renderSortable(item, itemPaths)}
+                      {...item.props}
+                    />
+                  ) : (
+                    <item.Component
+                      schema={item}
+                      paths={itemPaths}
+                      updatePageSchema={updatePageSchema}
+                      renderSortable={renderSortable}
+                    />
+                  )
+                ) : null
               ) : (
                 <Empty
                   style={{ margin: 0, padding: 10 }}
