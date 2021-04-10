@@ -10,6 +10,14 @@ import { pageSchemaState, selectedNodeState, hoverNodeState } from '../atoms';
 import { buildNodeSchema, getTargetFromTree, getUuid } from '../helpers';
 import type { PageSchema, NodeSchema } from '../types';
 
+const Wrapper = styled.div`
+  height: 100%;
+
+  .sortable-ghost {
+    margin: 2px;
+    border-radius: 0;
+  }
+`;
 const SortableList = styled(ReactSortable)`
   overflow: auto;
   position: relative;
@@ -246,7 +254,7 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
     );
   };
 
-  return renderSortable(pageSchema, []);
+  return <Wrapper>{renderSortable(pageSchema, [])}</Wrapper>;
 };
 
 export default SortableArea;

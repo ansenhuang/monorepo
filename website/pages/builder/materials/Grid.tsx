@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import styled from 'styled-components';
 import { Row, Col } from 'antd';
 import { getTargetFromTree, normalizeNodeScheme } from '../helpers';
 import type { BuilderComponent, CoreNodeSchema } from '../types';
@@ -14,11 +15,97 @@ const getCoreNodeScheme = (
   children: [],
 });
 
+const PullBar = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  cursor: col-resize;
+`;
+const Pull = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -2px;
+  z-index: 2;
+  width: 4px;
+  cursor: col-resize;
+`;
+
 const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortable }) => {
+  const [pullBarVisible, setPullBarVisible] = useState(false);
+
+  const pullBarRef = useRef<HTMLDivElement>(null);
+
   const { props, children } = schema;
   const { cols, ...rowProps } = props;
   const colNodes = Array.isArray(children) ? children : [];
   const colPaths = [...paths, 'children'];
+
+  const mouse = useMemo(
+    () => ({
+      index: -1,
+      startX: 0,
+      currentX: 0,
+    }),
+    [],
+  );
+  const updateSpan = (x: number) => {
+    const width = pullBarRef.current?.clientWidth || 1000;
+    const diffCurrentX = x - mouse.currentX;
+    const sign = Math.sign(diffCurrentX);
+    const span = Math.round(Math.abs((diffCurrentX / width) * 24));
+
+    if (span > 0) {
+      updatePageSchema((draftSchema) => {
+        const currentPaths = [...colPaths, String(mouse.index)];
+        const target = getTargetFromTree(draftSchema, currentPaths);
+        if (target) {
+          const { current, key } = target;
+          const nextKey = mouse.index + 1;
+          const realSpan = span * sign;
+          if (current[key]) {
+            const currentSpan = current[key].props.span || 1;
+            const nextSpan = currentSpan + realSpan;
+            if (nextSpan > 0 && nextSpan < 24) {
+              current[key].props.span = nextSpan;
+            }
+          }
+          if (current[nextKey]) {
+            const currentSpan = current[nextKey].props.span || 1;
+            const nextSpan = currentSpan - realSpan;
+            if (nextSpan > 0 && nextSpan < 24) {
+              current[nextKey].props.span = nextSpan;
+            }
+          }
+        } else {
+          console.warn('节点路径错误，无法更新目标节点', currentPaths);
+        }
+      });
+      mouse.currentX += (span / 24) * width * sign;
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
+    e.preventDefault();
+
+    mouse.index = index;
+    mouse.startX = e.clientX;
+    mouse.currentX = e.clientX;
+
+    setPullBarVisible(true);
+  };
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    console.log('move');
+
+    updateSpan(e.clientX);
+  };
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    updateSpan(e.clientX);
+    setPullBarVisible(false);
+  };
 
   useEffect(() => {
     /* eslint-disable react-hooks/exhaustive-deps */
@@ -48,9 +135,17 @@ const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortabl
         return node?.visible ? (
           <Col key={node.key} {...node.props}>
             {renderSortable(node, [...colPaths, String(index)])}
+            <Pull onMouseDown={(e) => handleMouseDown(e, index)} />
           </Col>
         ) : null;
       })}
+      <PullBar
+        ref={pullBarRef}
+        style={{ zIndex: pullBarVisible ? 3 : -1 }}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      />
     </Row>
   );
 };
