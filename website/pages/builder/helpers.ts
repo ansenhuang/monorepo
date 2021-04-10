@@ -31,6 +31,7 @@ const normalizePageSchema = (schema: StorePageSchema, materials: MaterialSchema[
     return {
       ...currentNode,
       Component,
+      visible: currentNode.visible !== false,
       children: Array.isArray(currentChildren)
         ? currentChildren.map((child) => loop(child))
         : currentChildren && loop(currentChildren),
@@ -105,6 +106,7 @@ export const normalizeNodeScheme = (schema: CoreNodeSchema): NodeSchema => {
   return {
     ...schema,
     key: name + '_' + getUuid(),
+    visible: true,
     Component: null,
     children: Array.isArray(children)
       ? children.map((child) => normalizeNodeScheme(child))

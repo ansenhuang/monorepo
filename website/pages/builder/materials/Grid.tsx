@@ -45,7 +45,7 @@ const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortabl
     <Row {...rowProps}>
       {[...Array(cols)].map((_, index) => {
         const node = colNodes[index];
-        return node ? (
+        return node?.visible ? (
           <Col key={node.key} {...node.props}>
             {renderSortable(node, [...colPaths, String(index)])}
           </Col>

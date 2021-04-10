@@ -11,12 +11,16 @@ import type { PageSchema, NodeSchema } from '../types';
 
 const Tree = styled.div`
   margin-left: -20px;
+  color: #666;
 `;
 const SortableList = styled(ReactSortable)`
   padding-left: 20px;
 `;
-const SortableItem = styled.div`
+const SortableItem = styled.div<{
+  visible?: boolean;
+}>`
   border-left: 1px dashed #f0f0f0;
+  color: ${({ visible }) => (visible ? 'inherit' : '#ccc')};
   position: relative;
   overflow: hidden;
 
@@ -31,12 +35,11 @@ const SortableItem = styled.div`
   }
 `;
 const Text = styled.div<{
-  selected: boolean;
-  hover: boolean;
+  hover?: boolean;
+  selected?: boolean;
 }>`
   display: flex;
   font-size: 12px;
-  color: #666;
   line-height: 28px;
   position: relative;
   border-bottom: 1px solid #f0f0f0;
@@ -56,7 +59,6 @@ const Text = styled.div<{
 const TextLeft = styled.span<{
   closed?: boolean;
 }>`
-  color: #999;
   transition: transform 0.15s;
   transform: rotate(${({ closed }) => (closed ? '-90' : '0')}deg);
 
@@ -203,7 +205,7 @@ const OutlineTree: React.FC = () => {
       <SortableList
         group={{
           name: 'outline_' + name,
-          pull: true,
+          pull: 'clone',
           put: true,
         }}
         animation={150}
@@ -220,6 +222,7 @@ const OutlineTree: React.FC = () => {
           return (
             <SortableItem
               key={item.key}
+              visible={item.visible}
               style={{
                 height: closedItems.includes(item.key) ? 29 : '',
               }}
@@ -239,13 +242,15 @@ const OutlineTree: React.FC = () => {
                   </TextLeft>
                 )}
                 <TextCenter
-                  style={{ paddingLeft: item.children ? 0 : 10 }}
+                  style={{
+                    paddingLeft: item.children ? 0 : 10,
+                  }}
                   onClick={() => handleItemSelected(item, itemPaths)}
                 >
                   {item.label} ({item.key})
                 </TextCenter>
                 <TextRight onClick={() => handleItemVisible(item, itemPaths)}>
-                  {item.visible !== false ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                  {item.visible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
                 </TextRight>
               </Text>
               {renderSortable(item, itemPaths)}

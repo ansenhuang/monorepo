@@ -28,7 +28,7 @@ export interface StoreNodeSchema extends Omit<NodeSchema, 'Component' | 'childre
 }
 
 export interface CoreNodeSchema
-  extends Omit<NodeSchema, 'key' | 'type' | 'Component' | 'children'> {
+  extends Omit<NodeSchema, 'key' | 'type' | 'visible' | 'Component' | 'children'> {
   children?: CoreNodeSchema | CoreNodeSchema[];
 }
 

@@ -32,8 +32,8 @@ const SortableList = styled(ReactSortable)`
   }
 `;
 const SortableItem = styled.div<{
-  hover: boolean;
-  selected: boolean;
+  hover?: boolean;
+  selected?: boolean;
 }>`
   margin: 2px;
   position: relative;
@@ -51,13 +51,13 @@ const SortableItemLayer = styled.div`
   cursor: grab;
 `;
 const SortableItemAction = styled.div<{
-  show: boolean;
+  visible?: boolean;
 }>`
   position: absolute;
   top: 0;
   right: 0;
   z-index: 100;
-  display: ${({ show }) => (show ? 'flex' : 'none')};
+  display: ${({ visible }) => (visible ? 'flex' : 'none')};
   font-size: 14px;
   color: #fff;
   border-radius: 0 0 0 2px;
@@ -174,8 +174,16 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
     return (
       <SortableList
         group={{
-          name,
-          put: true,
+          name: 'sortable_' + name,
+          pull: true,
+          put: (to, from, dragEl) => {
+            const { group } = from.options;
+            if (group && typeof group === 'object') {
+              const { name } = group;
+              return name === 'material' || name.startsWith('sortable_');
+            }
+            return false;
+          },
         }}
         animation={150}
         style={{ minHeight: isPage ? '100%' : '' }}
@@ -199,7 +207,7 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
               {/* 遮罩层，组织原子组件事件触发 */}
               {!item.children && <SortableItemLayer />}
               {/* 操作栏 */}
-              <SortableItemAction show={item.key === selectedNode?.key}>
+              <SortableItemAction visible={item.key === selectedNode?.key}>
                 <Tooltip title="复制">
                   <CopyOutlined onClick={() => handleItemCopy(itemPaths)} />
                 </Tooltip>
@@ -209,7 +217,7 @@ const SortableArea: React.FC<SortableAreaProps> = () => {
               </SortableItemAction>
               {/* 节点渲染 */}
               {item.Component ? (
-                item.visible !== false ? (
+                item.visible ? (
                   item.type !== 'builder' ? (
                     <item.Component
                       children={item.children && renderSortable(item, itemPaths)}
