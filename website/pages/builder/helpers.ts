@@ -17,21 +17,23 @@ const normalizePageSchema = (schema: StorePageSchema, materials: MaterialSchema[
     );
     const Component = targetMaterial?.Component || null;
     const getNodeSchema = (Component as any)?.__getInitialNodeSchema;
-    let currentNode = node;
+
+    const currentNode = { ...node };
 
     if (typeof getNodeSchema === 'function') {
-      currentNode = {
-        ...node,
-        ...getNodeSchema(node),
-      };
+      Object.assign(currentNode, getNodeSchema(node));
     }
 
     let currentChildren = currentNode.children;
 
     return {
+      ...(targetMaterial
+        ? patchNodeSchema(targetMaterial)
+        : {
+            visible: true,
+          }),
       ...currentNode,
       Component,
-      visible: currentNode.visible !== false,
       children: Array.isArray(currentChildren)
         ? currentChildren.map((child) => loop(child))
         : currentChildren && loop(currentChildren),
@@ -114,21 +116,29 @@ export const normalizeNodeScheme = (schema: CoreNodeSchema): NodeSchema => {
   };
 };
 
-export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
-  const { name, label, type, Component, propsSchema, children } = material;
-  const props = getInitialValues(propsSchema);
-
+const patchNodeSchema = (material: MaterialSchema) => {
+  const { name, label, type, accept, Component } = material;
   return {
-    key: name + '_' + getUuid(),
     name,
     label,
     type,
+    accept,
     Component,
+    visible: true,
+  };
+};
+
+export const buildNodeSchema = (material: MaterialSchema): NodeSchema => {
+  const { name, propsSchema, children } = material;
+  const props = getInitialValues(propsSchema);
+
+  return {
+    ...patchNodeSchema(material),
+    key: name + '_' + getUuid(),
     props,
     children: Array.isArray(children)
       ? children.map((child) => normalizeNodeScheme(child))
       : children && normalizeNodeScheme(children),
-    visible: true,
     unmounted: true,
   };
 };

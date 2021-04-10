@@ -25,6 +25,7 @@ const materials: MaterialSchema[] = [
     name: 'Grid',
     label: '栅格',
     type: 'builder',
+    accept: false,
     Component: Grid,
     propsSchema: {
       cols: {

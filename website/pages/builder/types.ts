@@ -5,6 +5,7 @@ export interface MaterialSchema {
   name: string;
   label: string;
   type?: 'component' | 'builder';
+  accept?: boolean | string[];
   Component: React.ComponentType<any> | null;
   propsSchema: Record<string, Omit<AxeFormItemConfig, 'name'>>;
   children?: CoreNodeSchema | CoreNodeSchema[];
@@ -16,6 +17,7 @@ export interface NodeSchema {
   builderName?: MaterialSchema['name'];
   label: MaterialSchema['label'];
   type?: MaterialSchema['type'];
+  accept?: MaterialSchema['accept'];
   Component: MaterialSchema['Component'];
   props: Record<string, any>;
   children?: NodeSchema | NodeSchema[];
@@ -28,7 +30,7 @@ export interface StoreNodeSchema extends Omit<NodeSchema, 'Component' | 'childre
 }
 
 export interface CoreNodeSchema
-  extends Omit<NodeSchema, 'key' | 'type' | 'visible' | 'Component' | 'children'> {
+  extends Omit<NodeSchema, 'key' | 'type' | 'visible' | 'accept' | 'Component' | 'children'> {
   children?: CoreNodeSchema | CoreNodeSchema[];
 }
 

@@ -193,7 +193,7 @@ const OutlineTree: React.FC = () => {
   };
 
   const renderSortable = (schema: PageSchema | NodeSchema, paths: string[]) => {
-    const { name, children } = schema as NodeSchema;
+    const { name, accept, children } = schema as NodeSchema;
 
     if (children == null) {
       return null;
@@ -205,8 +205,8 @@ const OutlineTree: React.FC = () => {
       <SortableList
         group={{
           name: 'outline_' + name,
-          pull: 'clone',
-          put: true,
+          pull: true,
+          put: accept == null ? true : accept,
         }}
         animation={150}
         draggable={'.' + SortableItem.styledComponentId}
