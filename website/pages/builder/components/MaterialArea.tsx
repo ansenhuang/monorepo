@@ -49,11 +49,12 @@ const SortableList = styled(ReactSortable)`
   overflow: auto;
 `;
 const SortableItem = styled.div`
-  margin: 2px;
-  line-height: 2;
+  margin: 4px;
+  line-height: 30px;
   text-align: center;
-  color: #008cff;
-  border: 1px solid #008cff;
+  color: #999;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   background-color: #fff;
   cursor: grab;
   position: relative;

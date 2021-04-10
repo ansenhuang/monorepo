@@ -12,6 +12,18 @@ import type { PageSchema, NodeSchema } from '../types';
 const Tree = styled.div`
   margin-left: -20px;
   color: #666;
+
+  .sortable-ghost {
+    margin: 0;
+    padding-left: 10px;
+    font-size: 12px;
+    line-height: 28px;
+    text-align: left;
+    color: inherit;
+    border-width: 0;
+    border-radius: 0;
+    background-color: #f0f0f0;
+  }
 `;
 const SortableList = styled(ReactSortable)`
   padding-left: 20px;
