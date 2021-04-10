@@ -4,7 +4,7 @@ import type { AxeFormItemConfig } from '@axe/form';
 export interface MaterialSchema {
   name: string;
   label: string;
-  type?: 'component' | 'builder';
+  type?: 'component' | 'layout' | 'form' | 'builder';
   accept?: boolean | string[];
   Component: React.ComponentType<any> | null;
   propsSchema: Record<string, Omit<AxeFormItemConfig, 'name'>>;

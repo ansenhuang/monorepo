@@ -6,6 +6,7 @@ const materials: MaterialSchema[] = [
   {
     name: 'Card',
     label: '分组',
+    type: 'layout',
     Component: Card,
     propsSchema: {
       title: {
@@ -62,8 +63,27 @@ const materials: MaterialSchema[] = [
   },
   {
     name: 'Input',
-    label: '输入框',
+    label: '单行文本',
+    type: 'form',
     Component: Input,
+    propsSchema: {
+      placeholder: {
+        label: '提示',
+        labelCol: { span: 6 },
+        initialValue: '请输入',
+        rules: [{ required: true, message: '请输入提示' }],
+        formType: 'Input',
+        formProps: {
+          placeholder: '请输入提示',
+        },
+      },
+    },
+  },
+  {
+    name: 'TextArea',
+    label: '多行文本',
+    type: 'form',
+    Component: Input.TextArea,
     propsSchema: {
       placeholder: {
         label: '提示',
@@ -80,6 +100,7 @@ const materials: MaterialSchema[] = [
   {
     name: 'Button',
     label: '按钮',
+    type: 'component',
     Component: Button,
     propsSchema: {
       type: {
