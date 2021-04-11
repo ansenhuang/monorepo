@@ -29,13 +29,13 @@
     "prettier-check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,json,md}\""
   },
   "dependencies": {
-    "@ant-design/icons": "^4.3.0",
+    "@ant-design/icons": "^4.6.2",
     "@types/lodash": "^4.14.167",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-is": "^16.7.0",
     "@types/styled-components": "^5.0.0",
-    "antd": "^4.10.0",
+    "antd": "^4.15.1",
     "immer": "^9.0.1",
     "inversify": "^5.0.5",
     "lodash": "^4.17.20",
