@@ -98,13 +98,19 @@ const Grid: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortabl
     setPullBarVisible(true);
   };
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log('move');
-
     updateSpan(e.clientX);
   };
   const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault();
+
+    if (mouse.startX === 0) {
+      return;
+    }
+
     updateSpan(e.clientX);
     setPullBarVisible(false);
+
+    mouse.startX = 0;
   };
 
   useEffect(() => {
