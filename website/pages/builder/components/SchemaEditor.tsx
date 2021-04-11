@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Input, notification } from 'antd';
 
-import type { PageSchema } from './types';
+import type { PageSchema } from '../types';
 
 interface SchemaEditorProps {
   visible: boolean;

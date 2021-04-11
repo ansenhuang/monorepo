@@ -1,4 +1,4 @@
-import { Card, Input, Button } from 'antd';
+import { Card, Input, Button } from './basic';
 import Grid from './Grid';
 import type { MaterialSchema } from '../types';
 
