@@ -7,8 +7,6 @@ import { getStorePageSchema } from '../helpers';
 import * as basicMaterials from '../materials/basic';
 import type { StoreNodeSchema } from '../types';
 
-console.log(basicMaterials);
-
 const Page = styled.div`
   position: relative;
 `;

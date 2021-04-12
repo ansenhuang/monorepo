@@ -1,4 +1,4 @@
-import { Card, Input, Button } from './basic';
+import { Card, Input, TextArea, Button } from './basic';
 import Grid from './Grid';
 import type { MaterialSchema } from '../types';
 
@@ -83,7 +83,7 @@ const materials: MaterialSchema[] = [
     name: 'TextArea',
     label: '多行文本',
     type: 'form',
-    Component: Input.TextArea,
+    Component: TextArea,
     propsSchema: {
       placeholder: {
         label: '提示',

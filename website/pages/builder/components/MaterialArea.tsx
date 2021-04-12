@@ -67,7 +67,7 @@ enum materialTypes {
   component = '组件',
   layout = '布局',
   form = '表单',
-  builder = '自定义',
+  builder = '容器',
 }
 const noop = () => {};
 

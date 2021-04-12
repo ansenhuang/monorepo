@@ -1,4 +1,14 @@
-import { Input } from 'antd';
+import {
+  Card as AntdCard,
+  Row as AntdRow,
+  Col as AntdCol,
+  Input as AntdInput,
+  Button as AntdButton,
+} from 'antd';
 
-export { Card, Row, Col, Input, Button } from 'antd';
-export const TextArea = Input.TextArea;
+export const Card = AntdCard;
+export const Row = AntdRow;
+export const Col = AntdCol;
+export const Input = AntdInput;
+export const { TextArea } = AntdInput;
+export const Button = AntdButton;
