@@ -1,5 +1,6 @@
 import { Card, Input, TextArea, Button } from './basic';
 import Grid from './Grid';
+import Tab from './Tab';
 import type { MaterialSchema } from '../types';
 
 const materials: MaterialSchema[] = [
@@ -87,6 +88,85 @@ const materials: MaterialSchema[] = [
       //   valuePropName: 'checked',
       //   formProps: {},
       // },
+    },
+    children: [],
+  },
+  {
+    name: 'Tab',
+    label: '选项卡',
+    type: 'builder',
+    accept: false,
+    Component: Tab,
+    propsSchema: {
+      tabPanes: {
+        label: '选项',
+        labelCol: { span: 6 },
+        initialValue: [{ key: 'init', value: '标签项' }],
+        rules: [{ required: true, type: 'array', message: '请添加选项' }],
+        formType: 'SortableList',
+        formProps: {
+          placeholder: '请输入标签内容',
+        },
+      },
+      type: {
+        label: '类型',
+        labelCol: { span: 6 },
+        initialValue: 'line',
+        formType: 'Select',
+        formProps: {
+          options: [
+            { label: 'line', value: 'line' },
+            { label: 'card', value: 'card' },
+            // { label: 'editable-card', value: 'editable-card' },
+          ],
+        },
+      },
+      size: {
+        label: '尺寸',
+        labelCol: { span: 6 },
+        initialValue: 'default',
+        formType: 'Select',
+        formProps: {
+          options: [
+            { label: 'default', value: 'default' },
+            { label: 'large', value: 'large' },
+            { label: 'small', value: 'small' },
+          ],
+        },
+      },
+      tabPosition: {
+        label: '位置',
+        labelCol: { span: 6 },
+        initialValue: 'top',
+        formType: 'Select',
+        formProps: {
+          options: [
+            { label: 'top', value: 'top' },
+            { label: 'bottom', value: 'bottom' },
+            { label: 'left', value: 'left' },
+            { label: 'right', value: 'right' },
+          ],
+        },
+      },
+      tabBarGutter: {
+        label: '间隔',
+        labelCol: { span: 6 },
+        initialValue: 0,
+        formType: 'InputNumber',
+        formProps: {
+          min: 0,
+          step: 1,
+          precision: 0,
+        },
+      },
+      centered: {
+        label: '居中',
+        labelCol: { span: 6 },
+        initialValue: false,
+        formType: 'Switch',
+        valuePropName: 'checked',
+        formProps: {},
+      },
     },
     children: [],
   },
