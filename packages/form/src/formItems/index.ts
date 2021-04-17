@@ -15,6 +15,7 @@ import {
   Switch,
   Upload,
 } from 'antd';
+import SortableList from './SortableList';
 
 const formItems = {
   Input,
@@ -36,6 +37,7 @@ const formItems = {
   Slider,
   Switch,
   Upload,
+  SortableList,
 };
 
 export default formItems;

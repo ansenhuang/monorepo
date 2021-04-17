@@ -20,13 +20,16 @@ export interface AxeFormInterface {
 }
 
 const AxeForm = ({
-  form = Form.useForm()[0],
+  form: topForm,
   items,
   formItems,
   validateInitial,
   children,
   ...restFormProps
 }: AxeFormProps): React.ReactElement<any, any> => {
+  const [currentForm] = Form.useForm();
+
+  const form = topForm || currentForm;
   const allFormItems: Record<string, any> = useMemo(() => ({ ...defaultFormItems, ...formItems }), [
     formItems,
   ]);

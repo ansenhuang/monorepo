@@ -1,6 +1,6 @@
 import React from 'react';
-
 import BasicUsage from './examples/BasicUsage';
+import CustomUsage from './examples/CustomUsage';
 
 const Page = () => {
   return (
@@ -13,6 +13,8 @@ const Page = () => {
       <h1>Form examples</h1>
       <h2>Basic Usage</h2>
       <BasicUsage />
+      <h2>Custom Usage</h2>
+      <CustomUsage />
     </div>
   );
 };
