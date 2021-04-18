@@ -33,6 +33,7 @@ interface SortableListProps extends Omit<InputProps, 'value' | 'onChange'> {
 }
 
 const SortableList: React.FC<SortableListProps> = ({
+  id,
   value = [],
   onChange = () => {},
   style,

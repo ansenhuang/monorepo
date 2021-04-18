@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Tabs } from 'antd';
+import { Tabs } from './basic';
 import { getTargetFromTree, normalizeNodeScheme } from '../helpers';
 import type { BuilderComponent, CoreNodeSchema } from '../types';
 

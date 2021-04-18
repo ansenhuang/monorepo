@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Row, Col } from 'antd';
+import { Row, Col } from './basic';
 import { getTargetFromTree, normalizeNodeScheme } from '../helpers';
 import type { BuilderComponent, CoreNodeSchema } from '../types';
 
