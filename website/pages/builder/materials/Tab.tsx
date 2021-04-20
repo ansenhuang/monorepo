@@ -18,7 +18,7 @@ const getCoreNodeScheme = (
 
 const Tab: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortable }) => {
   const { props, children } = schema;
-  const { tabPanes, ...tabsProps } = props;
+  const { tabPanes, style, ...tabsProps } = props;
   const tabPaneNodes = Array.isArray(children) ? children : [];
   const tabPanePaths = [...paths, 'children'];
 
@@ -54,7 +54,7 @@ const Tab: BuilderComponent = ({ schema, paths, updatePageSchema, renderSortable
   }, [tabPanes]);
 
   return (
-    <Tabs {...tabsProps}>
+    <Tabs style={{ backgroundColor: '#fff', ...style }} {...tabsProps}>
       {(tabPanes || []).map((_: any, index: number) => {
         const node = tabPaneNodes[index];
         return node?.visible ? (
