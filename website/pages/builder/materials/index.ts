@@ -2,6 +2,17 @@ import { Card, Input, TextArea, Button } from './basic';
 import Grid from './Grid';
 import Tab from './Tab';
 import type { MaterialSchema } from '../types';
+import type { AxeFormItemConfig } from '@axe/form/src';
+
+const buildPropsSchemaItem = (
+  data: Omit<AxeFormItemConfig, 'name'>,
+): Omit<AxeFormItemConfig, 'name'> => {
+  return {
+    labelCol: { span: 6 },
+    colon: false,
+    ...data,
+  };
+};
 
 const materials: MaterialSchema[] = [
   {
@@ -10,14 +21,13 @@ const materials: MaterialSchema[] = [
     type: 'layout',
     Component: Card,
     propsSchema: {
-      title: {
+      title: buildPropsSchemaItem({
         label: '标题',
-        labelCol: { span: 6 },
         initialValue: '分组',
         rules: [{ required: true, message: '请输入标题' }],
         formType: 'Input',
         formProps: {},
-      },
+      }),
     },
     children: [],
   },
@@ -28,9 +38,8 @@ const materials: MaterialSchema[] = [
     accept: false,
     Component: Grid,
     propsSchema: {
-      cols: {
+      cols: buildPropsSchemaItem({
         label: '列数',
-        labelCol: { span: 6 },
         initialValue: 2,
         rules: [{ required: true, message: '请输入列数' }],
         formType: 'InputNumber',
@@ -40,10 +49,9 @@ const materials: MaterialSchema[] = [
           step: 1,
           precision: 0,
         },
-      },
-      justify: {
+      }),
+      justify: buildPropsSchemaItem({
         label: '水平排列',
-        labelCol: { span: 6 },
         initialValue: 'start',
         formType: 'Select',
         formProps: {
@@ -55,10 +63,9 @@ const materials: MaterialSchema[] = [
             { label: 'space-between', value: 'space-between' },
           ],
         },
-      },
-      align: {
+      }),
+      align: buildPropsSchemaItem({
         label: '垂直排列',
-        labelCol: { span: 6 },
         initialValue: 'top',
         formType: 'Select',
         formProps: {
@@ -68,10 +75,9 @@ const materials: MaterialSchema[] = [
             { label: 'bottom', value: 'bottom' },
           ],
         },
-      },
-      gutter: {
+      }),
+      gutter: buildPropsSchemaItem({
         label: '间隔',
-        labelCol: { span: 6 },
         initialValue: 0,
         formType: 'InputNumber',
         formProps: {
@@ -79,15 +85,14 @@ const materials: MaterialSchema[] = [
           step: 1,
           precision: 0,
         },
-      },
-      // wrap: {
+      }),
+      // wrap: buildPropsSchemaItem({
       //   label: '自动换行',
-      //   labelCol: { span: 6 },
       //   initialValue: true,
       //   formType: 'Switch',
       //   valuePropName: 'checked',
       //   formProps: {},
-      // },
+      // }),
     },
     children: [],
   },
@@ -98,19 +103,17 @@ const materials: MaterialSchema[] = [
     accept: false,
     Component: Tab,
     propsSchema: {
-      tabPanes: {
+      tabPanes: buildPropsSchemaItem({
         label: '选项',
-        labelCol: { span: 6 },
         initialValue: [{ key: 'init', value: '标签项' }],
         rules: [{ required: true, type: 'array', message: '请添加选项' }],
         formType: 'SortableList',
         formProps: {
           placeholder: '请输入标签内容',
         },
-      },
-      type: {
+      }),
+      type: buildPropsSchemaItem({
         label: '类型',
-        labelCol: { span: 6 },
         initialValue: 'line',
         formType: 'Select',
         formProps: {
@@ -120,10 +123,9 @@ const materials: MaterialSchema[] = [
             // { label: 'editable-card', value: 'editable-card' },
           ],
         },
-      },
-      size: {
+      }),
+      size: buildPropsSchemaItem({
         label: '尺寸',
-        labelCol: { span: 6 },
         initialValue: 'default',
         formType: 'Select',
         formProps: {
@@ -133,10 +135,9 @@ const materials: MaterialSchema[] = [
             { label: 'small', value: 'small' },
           ],
         },
-      },
-      tabPosition: {
+      }),
+      tabPosition: buildPropsSchemaItem({
         label: '位置',
-        labelCol: { span: 6 },
         initialValue: 'top',
         formType: 'Select',
         formProps: {
@@ -147,10 +148,9 @@ const materials: MaterialSchema[] = [
             { label: 'right', value: 'right' },
           ],
         },
-      },
-      tabBarGutter: {
+      }),
+      tabBarGutter: buildPropsSchemaItem({
         label: '间隔',
-        labelCol: { span: 6 },
         initialValue: 0,
         formType: 'InputNumber',
         formProps: {
@@ -158,15 +158,14 @@ const materials: MaterialSchema[] = [
           step: 1,
           precision: 0,
         },
-      },
-      centered: {
+      }),
+      centered: buildPropsSchemaItem({
         label: '居中',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
+      }),
     },
     children: [],
   },
@@ -176,21 +175,18 @@ const materials: MaterialSchema[] = [
     type: 'form',
     Component: Input,
     propsSchema: {
-      defaultValue: {
+      defaultValue: buildPropsSchemaItem({
         label: '默认值',
-        labelCol: { span: 6 },
         formType: 'Input',
         formProps: {},
-      },
-      placeholder: {
+      }),
+      placeholder: buildPropsSchemaItem({
         label: '提示',
-        labelCol: { span: 6 },
         formType: 'Input',
         formProps: {},
-      },
-      type: {
+      }),
+      type: buildPropsSchemaItem({
         label: '类型',
-        labelCol: { span: 6 },
         initialValue: 'text',
         formType: 'Select',
         formProps: {
@@ -222,10 +218,9 @@ const materials: MaterialSchema[] = [
             { label: 'submit', value: 'submit' },
           ],
         },
-      },
-      size: {
+      }),
+      size: buildPropsSchemaItem({
         label: '尺寸',
-        labelCol: { span: 6 },
         initialValue: 'middle',
         formType: 'Select',
         formProps: {
@@ -235,41 +230,37 @@ const materials: MaterialSchema[] = [
             { label: 'small', value: 'small' },
           ],
         },
-      },
-      maxLength: {
+      }),
+      maxLength: buildPropsSchemaItem({
         label: '最大长度',
-        labelCol: { span: 6 },
         formType: 'InputNumber',
         formProps: {
           min: 0,
           step: 1,
           precision: 0,
         },
-      },
-      allowClear: {
+      }),
+      allowClear: buildPropsSchemaItem({
         label: '清空',
-        labelCol: { span: 6 },
         initialValue: true,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      bordered: {
+      }),
+      bordered: buildPropsSchemaItem({
         label: '边框',
-        labelCol: { span: 6 },
         initialValue: true,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      disabled: {
+      }),
+      disabled: buildPropsSchemaItem({
         label: '禁用',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
+      }),
     },
   },
   {
@@ -278,21 +269,18 @@ const materials: MaterialSchema[] = [
     type: 'form',
     Component: TextArea,
     propsSchema: {
-      defaultValue: {
+      defaultValue: buildPropsSchemaItem({
         label: '默认值',
-        labelCol: { span: 6 },
         formType: 'Input',
         formProps: {},
-      },
-      placeholder: {
+      }),
+      placeholder: buildPropsSchemaItem({
         label: '提示',
-        labelCol: { span: 6 },
         formType: 'Input',
         formProps: {},
-      },
-      size: {
+      }),
+      size: buildPropsSchemaItem({
         label: '尺寸',
-        labelCol: { span: 6 },
         initialValue: 'middle',
         formType: 'Select',
         formProps: {
@@ -302,67 +290,60 @@ const materials: MaterialSchema[] = [
             { label: 'small', value: 'small' },
           ],
         },
-      },
-      maxLength: {
+      }),
+      maxLength: buildPropsSchemaItem({
         label: '最大长度',
-        labelCol: { span: 6 },
         formType: 'InputNumber',
         formProps: {
           min: 0,
           step: 1,
           precision: 0,
         },
-      },
-      rows: {
+      }),
+      rows: buildPropsSchemaItem({
         label: '行数',
-        labelCol: { span: 6 },
         formType: 'InputNumber',
         formProps: {
           min: 1,
           step: 1,
           precision: 0,
         },
-      },
-      autoSize: {
+      }),
+      autoSize: buildPropsSchemaItem({
         label: '自适应',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      showCount: {
+      }),
+      showCount: buildPropsSchemaItem({
         label: '展示字数',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      allowClear: {
+      }),
+      allowClear: buildPropsSchemaItem({
         label: '清空',
-        labelCol: { span: 6 },
         initialValue: true,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      bordered: {
+      }),
+      bordered: buildPropsSchemaItem({
         label: '边框',
-        labelCol: { span: 6 },
         initialValue: true,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      disabled: {
+      }),
+      disabled: buildPropsSchemaItem({
         label: '禁用',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
+      }),
     },
   },
   {
@@ -371,17 +352,15 @@ const materials: MaterialSchema[] = [
     type: 'component',
     Component: Button,
     propsSchema: {
-      children: {
+      children: buildPropsSchemaItem({
         label: '文字',
-        labelCol: { span: 6 },
         initialValue: '按钮',
         rules: [{ required: true, message: '请输入文字' }],
         formType: 'Input',
         formProps: {},
-      },
-      type: {
+      }),
+      type: buildPropsSchemaItem({
         label: '类型',
-        labelCol: { span: 6 },
         initialValue: 'default',
         formType: 'Select',
         formProps: {
@@ -394,10 +373,9 @@ const materials: MaterialSchema[] = [
             { label: 'text', value: 'text' },
           ],
         },
-      },
-      shape: {
+      }),
+      shape: buildPropsSchemaItem({
         label: '形状',
-        labelCol: { span: 6 },
         initialValue: 'default',
         formType: 'Select',
         formProps: {
@@ -407,10 +385,9 @@ const materials: MaterialSchema[] = [
             { label: 'round', value: 'round' },
           ],
         },
-      },
-      size: {
+      }),
+      size: buildPropsSchemaItem({
         label: '尺寸',
-        labelCol: { span: 6 },
         initialValue: 'middle',
         formType: 'Select',
         formProps: {
@@ -420,39 +397,35 @@ const materials: MaterialSchema[] = [
             { label: 'small', value: 'small' },
           ],
         },
-      },
-      block: {
+      }),
+      block: buildPropsSchemaItem({
         label: '块级',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      danger: {
+      }),
+      danger: buildPropsSchemaItem({
         label: '危险',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      ghost: {
+      }),
+      ghost: buildPropsSchemaItem({
         label: '幽灵',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
-      loading: {
+      }),
+      loading: buildPropsSchemaItem({
         label: '加载中',
-        labelCol: { span: 6 },
         initialValue: false,
         formType: 'Switch',
         valuePropName: 'checked',
         formProps: {},
-      },
+      }),
     },
   },
 ];
